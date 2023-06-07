@@ -10,8 +10,8 @@ def replace_all(text, old, new):
     return text
 
 def giveMeProductRow(dataType,row):
-    row['description'] = replace_all(row['description'],'\u00a0', ' ')
-    row['model_name'] = replace_all(row['model_name'],'\u00a0', ' ')
+    row['description'] = replace_all(row['description'],'\u00a0', '')
+    row['model_name'] = replace_all(row['model_name'],'\u00a0', '')
     specifications = giveMeSpecification(dataType, row)
     newRow = {
         'id': str(ObjectId()),
@@ -31,7 +31,7 @@ def giveMeProductRow(dataType,row):
     }
 
     if dataType == 'MOBILE':
-        if specifications['RAM'] == '' and specifications['Internal Storage'] == '':
+        if specifications.get('RAM','') == '' and specifications.get('Internal Storage','') == '':
             return False
         newRow['brand']= row['model_name'].split(' ')[0].strip()
         newRow['model']= row['model_name']
