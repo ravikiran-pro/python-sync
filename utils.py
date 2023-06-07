@@ -31,7 +31,7 @@ def giveMeProductRow(dataType,row):
     }
 
     if dataType == 'MOBILE':
-        if 'charger' in row['model_name'].lower():
+        if specifications['RAM'] == '' and specifications['Internal Storage'] == '':
             return False
         newRow['brand']= row['model_name'].split(' ')[0].strip()
         newRow['model']= row['model_name']
