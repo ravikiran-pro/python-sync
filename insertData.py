@@ -1,4 +1,8 @@
+import os
 from pymongo import MongoClient
+from dotenv import load_dotenv
+
+MONGO_URI = os.getenv("MONGO_URI")
 
 def insertProduct(data):
 
@@ -7,7 +11,7 @@ def insertProduct(data):
         return False
 
     # Connect to the MongoDB server
-    client = MongoClient('mongodb://admin:VVD3lsuVl7TNbt5@91.203.132.255:27017/prodkt?directconnection=true')
+    client = MongoClient(MONGO_URI)
 
     # Access the database and collection
     db = client['prodkt']
