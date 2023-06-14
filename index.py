@@ -1,12 +1,15 @@
-from flask import Flask
+import threading
+from flask import Flask,jsonify
 from scrapper import scrapProduct
 
 app = Flask(__name__)
 
 @app.route("/sync")
 def hello_world():
-    return scrapProduct()
-
+    threading.Thread(target=scrapProduct).start()
+    return jsonify({
+        "message": "Product Data Sync Started!"
+    })
 @app.route("/")
 def health():
     return {
