@@ -14,7 +14,7 @@ def insertProduct(data):
     client = MongoClient(MONGO_URI)
 
     # Access the database and collection
-    db = client['prodkt']
+    db = client['prodkt-product-master-v1']
     collection = db['Products']
 
     # Define the filter to find the document to update
