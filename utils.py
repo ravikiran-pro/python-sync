@@ -51,7 +51,7 @@ def giveMeProductRow(dataType,row):
             'model_no': newRow.get('model_no',''),
             'specifications.RAM': specifications.get('RAM','NA'),
             'specifications.Color': specifications.get('Color','NA'),
-            'specifications.Storage': specifications.get('Color','NA'),
+            'specifications.Storage': specifications.get('Storage','NA'),
         }
         return newRow
 
