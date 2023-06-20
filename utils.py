@@ -10,6 +10,8 @@ def replace_all(text, old, new):
     return text
 
 def giveMeProductRow(dataType,row):
+    row['description'] = replace_all(row['description'],'\u00a0', '')
+    row['model_name'] = replace_all(row['model_name'],'\u00a0', '')
     specifications = giveMeSpecification(dataType, row)
     newRow = {
         'id': str(ObjectId()),
@@ -47,7 +49,6 @@ def giveMeProductRow(dataType,row):
         newRow['suggestion']= row['model_name'].split('(')[0].strip() + ' ' + specifications['RAM'].replace(' ', '').lower()+' '+specifications['Storage'].replace(' ', '').lower() +' '+specifications['Color'].lower()
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
-            'model': newRow.get('model',''),
             'specifications.RAM': specifications.get('RAM','NA'),
             'specifications.Color': specifications.get('Color','NA'),
             'specifications.Storage': specifications.get('Color','NA'),
@@ -64,7 +65,6 @@ def giveMeProductRow(dataType,row):
         newRow['suggestion']= row.get('specs', {}).get('Brand',"")+ ' ' + specifications["Type"]+' ac '+specifications["Capacity"].lower()
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
-            'model': newRow.get('model',''),
             'specifications.Type': specifications.get('Type','NA'),
             'specifications.Inverter/Non-Inverter': specifications.get('Inverter/Non-Inverter','NA'),
             'specifications.Capacity': specifications.get('Capacity','NA'),
