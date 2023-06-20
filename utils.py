@@ -10,8 +10,6 @@ def replace_all(text, old, new):
     return text
 
 def giveMeProductRow(dataType,row):
-    row['description'] = replace_all(row['description'],'\u00a0', '')
-    row['model_name'] = replace_all(row['model_name'],'\u00a0', '')
     specifications = giveMeSpecification(dataType, row)
     newRow = {
         'id': str(ObjectId()),
@@ -19,7 +17,16 @@ def giveMeProductRow(dataType,row):
         'name': row['model_name'],
         'brand': "",
         'model':"",
+        'model_no': row.get('specs',{}).get('Model Number',""),
+        'brand_image': row.get('brand_image',''),
         'description': row['description'],
+        'warranty_coverage': row.get('specs',{}).get('Domestic Warranty',""),
+        'warranty_details': {
+            'warranty_summary': row.get('specs',{}).get('Warranty Summary',""),
+            'covered':row.get('specs',{}).get('Covered in Warranty',""),
+            'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+            'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+        },
         'img': row['images'][0] if row['images'] else 'https://prodkt-master.objectstore.e2enetworks.net/ProductPlaceholder.svg',
         'suggestion':"",
         'specifications': specifications,
@@ -31,13 +38,20 @@ def giveMeProductRow(dataType,row):
     }
 
     if dataType == 'MOBILE':
-        if specifications.get('RAM','') == '' and specifications.get('Internal Storage','') == '':
+        if specifications.get('RAM','') == '' and specifications.get('Storage','') == '':
             return False
         newRow['brand']= row['model_name'].split(' ')[0].strip()
         newRow['model']= row['model_name']
         newRow['category_id']= '61645a921082c438b19ad830'
         newRow['product_type_id']= '61645a921082c438b19ad835'
         newRow['suggestion']= row['model_name'].split('(')[0].strip() + ' ' + specifications['RAM'].replace(' ', '').lower()+' '+specifications['Storage'].replace(' ', '').lower() +' '+specifications['Color'].lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'specifications.RAM': specifications.get('RAM','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+            'specifications.Storage': specifications.get('Color','NA'),
+        }
         return newRow
 
     if dataType == 'AC':
@@ -48,6 +62,14 @@ def giveMeProductRow(dataType,row):
         newRow['category_id']= "61645a921082c438b19ad831"
         newRow['product_type_id']= "61645a921082c438b19ad844"
         newRow['suggestion']= row.get('specs', {}).get('Brand',"")+ ' ' + specifications["Type"]+' ac '+specifications["Capacity"].lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Inverter/Non-Inverter': specifications.get('Inverter/Non-Inverter','NA'),
+            'specifications.Capacity': specifications.get('Capacity','NA'),
+            'specifications.Rating': specifications.get('Rating','NA'),
+        }
         return newRow
 
 

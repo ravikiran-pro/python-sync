@@ -55,6 +55,10 @@ def productDetails(url,massage):
       product_page=requests.get(base_url+link['href'])
       product_soup=BeautifulSoup(product_page.content,"html.parser")
       product_images=product_soup.find_all("img",class_="q6DClP",src=True)
+      brand_image_div=product_soup.find_all("div",class_="_3nWYNs")
+      brand_image=''
+      if len(brand_image_div):
+        brand_image= brand_image_div[0].find_all("img")[0]['src']
       model_name=getText(product_soup.find("span",class_="B_NuCI"))
       description=getText(product_soup.find("div",class_="_1mXcCf RmoJUa"))
       img=[image['src'] for image in product_images] 
@@ -95,6 +99,7 @@ def productDetails(url,massage):
           for table in table_elements:
              specs.update(getTableData(table))
       product["images"]=(img) 
+      product["brand_image"]=brand_image 
       product["model_name"]=model_name
       product["description"]=description
       product["rating"]=rating
