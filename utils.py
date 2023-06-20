@@ -43,13 +43,14 @@ def giveMeProductRow(dataType,row):
         if specifications.get('RAM','') == '' and specifications.get('Storage','') == '':
             return False
         newRow['brand']= row['model_name'].split(' ')[0].strip()
-        newRow['model']= row['model_name']
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['category_id']= '61645a921082c438b19ad830'
         newRow['product_type_id']= '61645a921082c438b19ad835'
         newRow['suggestion']= row['model_name'].split('(')[0].strip() + ' ' + specifications['RAM'].replace(' ', '').lower()+' '+specifications['Storage'].replace(' ', '').lower() +' '+specifications['Color'].lower()
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
             'model': newRow.get('model',''),
+            'brand': newRow['brand'],
             'specifications.RAM': specifications.get('RAM','NA'),
             'specifications.Color': specifications.get('Color','NA'),
             'specifications.Storage': specifications.get('Storage','NA'),
@@ -67,6 +68,7 @@ def giveMeProductRow(dataType,row):
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
             'model': newRow.get('model',''),
+            'brand': newRow['brand'],
             'specifications.Type': specifications.get('Type','NA'),
             'specifications.Inverter/Non-Inverter': specifications.get('Inverter/Non-Inverter','NA'),
             'specifications.Capacity': specifications.get('Capacity','NA'),
