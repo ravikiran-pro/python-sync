@@ -14,8 +14,6 @@ def giveMeProductRow(dataType,row):
     row['model_name'] = replace_all(row['model_name'],'\u00a0', '')
     specifications = giveMeSpecification(dataType, row)
     newRow = {
-        'id': str(ObjectId()),
-        'product_id': str(ObjectId()),
         'name': row['model_name'],
         'brand': "",
         'model':"",
@@ -36,7 +34,8 @@ def giveMeProductRow(dataType,row):
         'product_type_id':"",
         'is_active': True,
         'created_at': iso_string,
-        'updated_at': iso_string
+        'updated_at': iso_string,
+        'scrap': row
     }
 
     if dataType == 'MOBILE':
@@ -75,6 +74,26 @@ def giveMeProductRow(dataType,row):
             'specifications.Rating': specifications.get('Rating','NA'),
         }
         return newRow
+    
+    if dataType == 'REFRIGERATOR':
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('model_name', {}).split(" L ")[0] + " L"
+        newRow['model_no']= row.get('model_name', {}).split(",")[-1].strip()[:-1]
+        newRow['category_id']= "61645a921082c438b19ad831"
+        newRow['product_type_id']= "61645a921082c438b19ad841"
+        newRow['warranty_coverage']= row.get('specs',{}).get('Warranty Summary',"").split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'] + ' refrigerator ' + specifications["Capacity"].lower() + ' ' + specifications["Type"].lower() + ' ' + specifications["Rating"] + ' star'
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Doors': specifications.get('Doors','NA'),
+            'specifications.Capacity': specifications.get('Capacity','NA'),
+            'specifications.Rating': specifications.get('Rating','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+        return newRow
 
 
 def giveMeSpecification(dataType, row):
@@ -94,6 +113,16 @@ def giveMeSpecification(dataType, row):
             'Inverter/Non-Inverter': 'Inverter' if is_inverter else 'Non-Inverter',
             'Capacity': row.get('specs', {}).get('Capacity in Tons', ''),
             'Rating': row.get('specs', {}).get('Star Rating', '')
+        }
+    pass
+
+    if dataType == 'REFRIGERATOR':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Doors': row.get('specs', {}).get('Number of Doors', ''),
+            'Capacity': row.get('specs', {}).get('Capacity', ''),
+            'Rating': row.get('specs', {}).get('Star Rating', ''),
+            'Color': row.get('model_name', {}).split("(")[1].split(",")[0]
         }
     pass
 
@@ -119,6 +148,15 @@ productData = [
         ],
         "searchKey":"ac",
         "getRow": lambda row: giveMeProductRow('AC',row)
+    },
+    {
+        "brands":[
+            'LG', 'Samsung', 'Whirlpool', 'Haier', 'Godrej', 'Bosch', 'Panasonic', 'Voltas', 
+            'Hitachi', 'IFB', 'Siemens', 'Kelvinator', 'Videocon', 'Onida', 'Toshiba', 'Electrolux', 
+            'Sharp', 'Intex', 'Sansui', 'Mitashi', 'Blue Star', 'Croma', 'Lloyd', 'Kenstar'
+        ],
+        "searchKey":"refrigerator",
+        "getRow": lambda row: giveMeProductRow('REFRIGERATOR',row)
     },
 ]
 

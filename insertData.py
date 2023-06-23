@@ -7,7 +7,7 @@ MONGO_URI = os.getenv("MONGO_URI")
 def insertProduct(data):
 
     if data == False:
-        print('Nothing to Insert')
+        print(f"Nothing to Insert")
         return False
 
     # Connect to the MongoDB server
@@ -19,14 +19,14 @@ def insertProduct(data):
 
     # Define the filter to find the document to update
     filter = data.get('filter',{'model':data.get('model','')})
-    print('filter:', filter)
 
     # Checking whether the product is already in the DB or not
     isExist = collection.find_one(filter)
-    print('isExist:', isExist)
 
     if isExist is not None:
-        print("Product Already Exists")
+        print(f"Product Already Exists")
+        print(f"Product Name: {data['name']}")
+        print(f"Founded Product Name: {isExist['name']}")
     else:
         # Removing the filter key from data
         data.pop('filter')
@@ -36,9 +36,9 @@ def insertProduct(data):
 
         # Check if the insertion was successful
         if insert_result.acknowledged:
-            print('Product inserted successfully. Inserted ID:', insert_result.inserted_id)
+            print(f"Product inserted successfully. Inserted ID: {insert_result.inserted_id}")
         else:
-            print('Failed to insert Product.')
+            print(f"Failed to insert Product.")
 
     # Close the connection
     client.close()
