@@ -1,5 +1,6 @@
 import requests
 import threading
+import time
 from bs4 import BeautifulSoup
 from utils import productData
 from insertData import insertProduct
@@ -109,6 +110,7 @@ def getDataFromProductLink(link,massage):
     except Exception as e:
         print(f"Error getDataFromProductLink: {str(e)}")
         print(f"link: {link}")
+        time.sleep(30)
         threading.Thread(target=getDataFromProductLink,args=(link,massage)).start()
 
 def productDetails(url,massage):
@@ -154,7 +156,7 @@ def scrapProduct():
             q="all+"+value+"+"+ product['searchKey'] +"&augment=false"
             url = base_url+"/search?q="+str(q)
             print(f"Scraping thread of : {value} started")
-            threading.Thread(target=productDetails,args=(url,product['getRow'])).start()
+            productDetails(url,product['getRow'])
 
     print("All Threads started:")
     return {"message":"Product Data Synced!"}    
