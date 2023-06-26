@@ -37,6 +37,7 @@ def getGridData(element):
     return details
 
 def getDataFromProductLink(link,massage):
+    thread = ''
     try:    
         product={} 
         product["product_link"]=base_url+link['href']
@@ -105,13 +106,15 @@ def getDataFromProductLink(link,massage):
         product["specs"]=specs 
         product["details"]=details 
         print(f"Inserting the scraped Data: {product['model_name']}")
-        threading.Thread(target=insertProduct,args=(massage(product),)).start()
+        thread = threading.Thread(target=insertProduct,args=(massage(product),))
+        thread.start()
+        thread.join()
 
     except Exception as e:
         print(f"Error getDataFromProductLink: {str(e)}")
         print(f"link: {link}")
         time.sleep(30)
-        threading.Thread(target=getDataFromProductLink,args=(link,massage)).start()
+        getDataFromProductLink(link,massage)
 
 def productDetails(url,massage):
     try: 
@@ -128,8 +131,10 @@ def productDetails(url,massage):
             product_links=class2 
         elif(class3):
             product_links=class3  
-        for link in product_links:  
-            threading.Thread(target=getDataFromProductLink,args=(link,massage)).start()
+        for link in product_links: 
+            thread = threading.Thread(target=getDataFromProductLink,args=(link,massage))
+            thread.start()
+            thread.join()
             # break
         next_page=main_soup.find_all("a",class_="_1LKTO3",href=True)
         if(next_page): 
