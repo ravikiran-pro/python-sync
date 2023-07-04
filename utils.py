@@ -103,25 +103,33 @@ def giveMeProductRow(dataType,row):
         newRow['model_no']= newRow['model_no'][0]
         newRow['category_id']= '61645a921082c438b19ad831'
         newRow['product_type_id']= '61645a921082c438b19ad845'
-        newRow['warranty_coverage']= row.get('specs',{}).get('Warranty Summary',"").split('Warranty')[0].strip()
-        newRow['suggestion']= row.get('model_name', {}).split(" ")[0] + ' ' + specifications['Type'].replace(' ', '').lower()+' '+specifications['Size'].replace(' ', '').lower() +' '+specifications['Resolution'].lower()[1:]
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        resolution = specifications['Resolution'].lower()
+        if (resolution):
+            resolution = resolution[:1]
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= row.get('model_name', {}).split(" ")[0] + ' ' + specifications['Type'].replace(' ', '').lower()+' '+specifications['Size'].replace(' ', '').lower() +' '+resolution
         newRow['filter'] = {
             'model_no': newRow['model_no'],
             'model': newRow.get('model',''),
             'brand': newRow['brand'],
             'specifications.Type': specifications.get('Type','NA'),
             'specifications.Size': specifications.get('Size','NA'),
-            'specifications.Resolution': specifications.get('Resolution','NA')[1:],
+            'specifications.Resolution': resolution or 'NA',
         }
         return newRow
 
     if dataType == 'LAPTOP':    
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',""),
+        newRow['model_no']= row.get('specs', {}).get('Model Name',""),
         newRow['model_no']= newRow['model_no'][0]
         newRow['category_id']= '61645a921082c438b19ad830'
         newRow['product_type_id']= '61645a921082c438b19ad836'
-        newRow['warranty_coverage']= row.get('specs',{}).get('Warranty Summary',"").split('Warranty')[0].strip()
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
         newRow['suggestion']= row.get('model_name', {}).split(" ")[0] + ' ' + specifications['Os'].replace(' ', '').lower()+' '+specifications['Processor'].replace(' ', '').lower() +' '+specifications['Ram'].lower()
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
@@ -132,7 +140,62 @@ def giveMeProductRow(dataType,row):
             'specifications.Ram': specifications.get('Ram','NA'),
         }
         return newRow
-
+    
+    if dataType == 'TABLET':    
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Number',""),
+        newRow['category_id']= '61645a921082c438b19ad830'
+        newRow['product_type_id']= '61645a921082c438b19ad838'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['RAM'].replace(' ', '').lower()+' '+specifications['Storage'].replace(' ', '').lower() +' '+specifications['Color'].lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.RAM': specifications.get('RAM','NA'),
+            'specifications.Storage': specifications.get('Internal Storage','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+        return newRow
+    
+    if dataType == 'WASHING MACHINE':    
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        # newRow['model_no']= row.get('specs', {}).get('Model Number',""),
+        newRow['category_id']= '61645a921082c438b19ad831'
+        newRow['product_type_id']= '61645a921082c438b19ad842'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Load'].replace(' ', '').lower()+' '+specifications['Capacity'].replace(' ', '').lower() +' '+specifications['Color'].lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Load': specifications.get('Function Type','NA'),
+            'specifications.Capacity': specifications.get('Washing Capacity','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+        return newRow
+    
+    if dataType == 'PRINTER SCANNERS':    
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        # newRow['model_no']= row.get('specs', {}).get('Model Number',""),
+        newRow['category_id']= '61645a921082c438b19ad830'
+        newRow['product_type_id']= '61645a921082c438b19ad83a'
+        # newRow['warranty_coverage']= row.get('specs',{}).get('Warranty Summary',"").split('Warranty')[0].strip()
+        newRow['suggestion']= row['brand'].split('(')[0].strip() + ' ' + specifications['Type'].replace(' ', '').lower()
+        newRow['filter'] = {
+            # 'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Printing Method','NA'),
+        }
+        return newRow
 
 def giveMeSpecification(dataType, row):
 
@@ -180,19 +243,42 @@ def giveMeSpecification(dataType, row):
         }
     pass
 
+    if dataType == 'TABLET':
+        return {
+            'RAM': row.get('specs', {}).get('RAM', ''),
+            'Storage': row.get('specs', {}).get('Internal Storage', ''),
+            'Color': row.get('specs', {}).get('Color', ''),
+        }
+    pass
+
+    if dataType == 'WASHING MACHINE':
+        return {
+            'Load': row.get('specs', {}).get('Function Type', ''),
+            'Capacity': row.get('specs', {}).get('Washing Capacity', ''),
+            'Color': row.get('specs', {}).get('Color', ''),
+        }
+    pass
+
+
+    if dataType == 'PRINTER SCANNERS':
+        return {
+           'Type': row.get('specs', {}).get('Printing Method', ''),
+        }
+    pass
+
     return {}
 
 productData = [
     # {
-        # "brands":[ 
-        #     "Acer", "Apple","Asus","BlackBerry","Celkon","Gionee","Google",
-        #     "Haier","Honor","HP","HTC","Huawei","Infinix","Intex","Karbonn",
-        #     "Lava","Lenovo","LG","Micromax","Microsoft","Motorola","Nokia","Nothing",
-        #     "OnePlus","Oppo","Panasonic","Philips","Realme","Samsung","Sony",
-        #     "Spice","TCL","Tecno","vivo","Xiaomi","XOLO","YU","ZTE"
-        # ],
-        # "searchKey":"mobiles",
-        # "getRow": lambda row: giveMeProductRow('MOBILE',row)
+    #     "brands":[ 
+    #         "Acer", "Apple","Asus","BlackBerry","Celkon","Gionee","Google",
+    #         "Haier","Honor","HP","HTC","Huawei","Infinix","Intex","Karbonn",
+    #         "Lava","Lenovo","LG","Micromax","Microsoft","Motorola","Nokia","Nothing",
+    #         "OnePlus","Oppo","Panasonic","Philips","Realme","Samsung","Sony",
+    #         "Spice","TCL","Tecno","vivo","Xiaomi","XOLO","YU","ZTE"
+    #     ],
+    #     "searchKey":"mobiles",
+    #     "getRow": lambda row: giveMeProductRow('MOBILE',row)
     # },
     # {
     #     "brands":[ 
@@ -224,14 +310,41 @@ productData = [
     #     "getRow": lambda row: giveMeProductRow('TV',row)
     # },
     {
-        "brands": ['Hp'],
-        "brands":[
-            'Hp', 'Asus', 'Lenovo', 'Dell', 'Msi',
-            'Apple', 'Avita', 'Acer', 'Samsung', 'Infinix',
-            'Realme', 'Gigabyte', 'Vaio', 'Primebook', 'Alienware',
-            'Smartron', 'Microsoft', 'Lg Gram',  
-        ],
+        "brands": ["Alienware"],
+        # "brands":[
+        #     'Hp', 'Asus', 'Lenovo', 'Dell', 'Msi',
+        #     'Apple', 'Avita', 'Acer', 'Samsung', 'Infinix',
+        #     'Realme', 'Gigabyte', 'Vaio', 'Primebook', 'Alienware',
+        #     'Smartron', 'Microsoft', 'Lg Gram',  
+        # ],
         "searchKey":"laptop",
         "getRow": lambda row: giveMeProductRow('LAPTOP',row)
     },
+    # {
+    #     "brands":[
+    #         'Honor', 'Mi', 'OnePlus', 'Oppo', 'Apple',
+    #         'Spigen', 'Samsung', 'Lenovo', 'Huawei', 'Asus',
+    #         'Xiaomi', 'Dell', 'HP', 'Google', 'Tcl',
+    #         'Alcatel', 'Iball', 'Honor', 'Motorola',
+    #           ],
+    #     "searchKey":"tablet",
+    #     "getRow": lambda row: giveMeProductRow('TABLET',row)
+    # },
+    # {
+    #     "brands":[
+    #          'Samsung', 'LG', 'Whirlpool', 'IFB', 'Panasonic', 
+    #          'Motorola', 'Thomson', 'Godrej', 'Bosch', 'Voltas beko', 
+    #          'Haier', 'Lloyd', 'Onida', 
+    #           ],
+    #     "searchKey":"washing machine",
+    #     "getRow": lambda row: giveMeProductRow('WASHING MACHINE',row)
+    # },
+    # {
+    #     "brands":[
+    #          'HP', 'Epson', 'Canon', 'brother', 'PANTUM',
+    #          'Xerox', 'SAMSUNG', 
+    #           ],
+    #     "searchKey":"printer scanners",
+    #     "getRow": lambda row: giveMeProductRow('PRINTER SCANNERS',row)
+    # },
 ]

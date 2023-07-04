@@ -36,7 +36,7 @@ def getGridData(element):
     details["description"]=getText(element.find("div",class_="_1AN87F"))
     return details
 
-def getDataFromProductLink(link, massage, product_datas):
+def getDataFromProductLink(link, massage):
     thread = ''
     try:    
         product={} 
@@ -106,8 +106,6 @@ def getDataFromProductLink(link, massage, product_datas):
         product["specs"]=specs 
         product["details"]=details 
         print(f"Inserting the scraped Data: {product['model_name']}")
-        massagedData = massage(product)
-        product_datas.append(massagedData)
         insertProduct(massage(product))
         # thread = threading.Thread(target=insertProduct,args=(massage(product),))
         # thread.start()
@@ -117,9 +115,10 @@ def getDataFromProductLink(link, massage, product_datas):
         print(f"Error getDataFromProductLink: {str(e)}")
         print(f"link: {link}")
         time.sleep(30)
-        getDataFromProductLink(link, massage, product_datas)
+        getDataFromProductLink(link, massage)
 
-def productDetails(url, massage, get_all_product_links):
+def productDetails(url, massage, get_all_product_links, threads):
+    next_link=""
     try: 
         # print(f"Scraping the page: {url}")
         main_page=requests.get(url)
@@ -134,11 +133,11 @@ def productDetails(url, massage, get_all_product_links):
             product_links.append(class2)
         elif(class3):
             product_links.append(class3)  
-        get_all_product_links.extend(product_links[0])
+        threads.append(threading.Thread(target=getDataFromProductLinkThread, args=(product_links[0], massage)))
+        threads[-1].start()
         
         next_page=main_soup.find_all("a",class_="_1LKTO3",href=True)
         if(next_page): 
-                next_link=""
                 if(len(next_page)==2):
                     if(next_page[1].text == "Next"):
                         next_link=next_page[1]["href"]
@@ -147,18 +146,14 @@ def productDetails(url, massage, get_all_product_links):
                         next_link=next_page[0]["href"] 
                 if(next_link):
                     next_link=base_url+next_link
-                    getDataFromProductLinkThread(product_links[0], massage)
-                    # thread = threading.Thread(target=getDataFromProductLinkThread, args=(product_links[0], massage))
-                    # thread.start()
-                    # thread.join()
-                    productDetails(next_link, massage, get_all_product_links)
+                    productDetails(next_link, massage, get_all_product_links,threads)
 
     except Exception as e:
         print(f"Error productDetails: {str(e)}")
         print(f"url: {str(url)}")
         print(f"massage: {str(massage)}")
-        time.sleep(30)
-        productDetails(next_link, massage, get_all_product_links)
+        # time.sleep(30)
+        # productDetails(next_link, massage, get_all_product_links)
 
 
 def getDataFromProductLinkThread(product_links, massage):
@@ -166,8 +161,7 @@ def getDataFromProductLinkThread(product_links, massage):
     if product_links:
         # getDataFromProductLink(product_links[0], massage, product_datas)
         for link in product_links:
-            getDataFromProductLink(link, massage, product_datas)
-        print(len(product_datas))
+            getDataFromProductLink(link, massage)
 
 def scrapProductDetails(brands, searchKey, getRow):
     threads = []
@@ -175,13 +169,18 @@ def scrapProductDetails(brands, searchKey, getRow):
         q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false"
         url = base_url+"/search?q="+str(q)
         product_links = []
-        # print(f"Scraping thread of : {value} started")
-        productDetails(url, getRow, product_links)
-        # if(product_links):
-        #     threads.append(threading.Thread(target=getDataFromProductLinkThread, args=(product_links, getRow)))
-        #     threads[-1].start()
+        print(f"Scraping thread of : {value} started")
+        productDetails(url, getRow, product_links, threads)
+        # threading.Thread(target=productDetails, args=(url, getRow, product_links, threads))
     for t in threads:                                                           
         t.join() 
+
+    #     if(product_links):
+    #         threads.append(threading.Thread(target=getDataFromProductLinkThread, args=(product_links, getRow)))
+    #         product_links = []
+    #         threads[-1].start()
+    # for t in threads:                                                           
+    #     t.join() 
 
 def scrapProduct():
     threads = []
