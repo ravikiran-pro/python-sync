@@ -16,3 +16,4 @@ def health():
         "message": "Server is running...."
     }
     
+app.config['DEBUG'] = True

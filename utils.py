@@ -96,6 +96,44 @@ def giveMeProductRow(dataType,row):
         return newRow
 
 
+    if dataType == 'TV':    
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('model_name', {}).split(" (", 1)[0]
+        newRow['model_no']= row.get('specs', {}).get('Model Name',""),
+        newRow['model_no']= newRow['model_no'][0]
+        newRow['category_id']= '61645a921082c438b19ad831'
+        newRow['product_type_id']= '61645a921082c438b19ad845'
+        newRow['warranty_coverage']= row.get('specs',{}).get('Warranty Summary',"").split('Warranty')[0].strip()
+        newRow['suggestion']= row.get('model_name', {}).split(" ")[0] + ' ' + specifications['Type'].replace(' ', '').lower()+' '+specifications['Size'].replace(' ', '').lower() +' '+specifications['Resolution'].lower()[1:]
+        newRow['filter'] = {
+            'model_no': newRow['model_no'],
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Size': specifications.get('Size','NA'),
+            'specifications.Resolution': specifications.get('Resolution','NA')[1:],
+        }
+        return newRow
+
+    if dataType == 'LAPTOP':    
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',""),
+        newRow['model_no']= newRow['model_no'][0]
+        newRow['category_id']= '61645a921082c438b19ad830'
+        newRow['product_type_id']= '61645a921082c438b19ad836'
+        newRow['warranty_coverage']= row.get('specs',{}).get('Warranty Summary',"").split('Warranty')[0].strip()
+        newRow['suggestion']= row.get('model_name', {}).split(" ")[0] + ' ' + specifications['Os'].replace(' ', '').lower()+' '+specifications['Processor'].replace(' ', '').lower() +' '+specifications['Ram'].lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Os': specifications.get('Operating System','NA'),
+            'specifications.Processor': specifications.get('Processor Name','NA'),
+            'specifications.Ram': specifications.get('Ram','NA'),
+        }
+        return newRow
+
+
 def giveMeSpecification(dataType, row):
 
     if dataType == 'MOBILE':
@@ -126,37 +164,74 @@ def giveMeSpecification(dataType, row):
         }
     pass
 
+    if dataType == 'TV':
+        return {
+            'Type': row.get('specs', {}).get('Screen Type', ''),
+            'Size': row.get('specs', {}).get('Display Size', ''),
+            'Resolution': row.get('specs', {}).get('HD Technology & Resolution', '').split(",")[1]
+        }
+    pass
+
+    if dataType == 'LAPTOP':
+        return {
+            'Os': row.get('specs', {}).get('Operating System', ''),
+            'Processor': row.get('specs', {}).get('Processor Name', ''),
+            'Ram': row.get('specs', {}).get('RAM', ''),
+        }
+    pass
+
     return {}
 
 productData = [
+    # {
+        # "brands":[ 
+        #     "Acer", "Apple","Asus","BlackBerry","Celkon","Gionee","Google",
+        #     "Haier","Honor","HP","HTC","Huawei","Infinix","Intex","Karbonn",
+        #     "Lava","Lenovo","LG","Micromax","Microsoft","Motorola","Nokia","Nothing",
+        #     "OnePlus","Oppo","Panasonic","Philips","Realme","Samsung","Sony",
+        #     "Spice","TCL","Tecno","vivo","Xiaomi","XOLO","YU","ZTE"
+        # ],
+        # "searchKey":"mobiles",
+        # "getRow": lambda row: giveMeProductRow('MOBILE',row)
+    # },
+    # {
+    #     "brands":[ 
+    #         "Daikin","Voltas","Blue Star","LG","Hitachi","Carrier","Samsung","Whirlpool",
+    #         "Godrej","Mitsubishi Electric","Panasonic","Lloyd","Haier","O General","Onida",
+    #         "IFB","Sharp","TCL","Sanyo","Videocon"
+    #     ],
+    #     "searchKey":"ac",
+    #     "getRow": lambda row: giveMeProductRow('AC',row)
+    # },
+    # {
+    #     "brands":[
+    #         'LG', 'Samsung', 'Whirlpool', 'Haier', 'Godrej', 'Bosch', 'Panasonic', 'Voltas', 
+    #         'Hitachi', 'IFB', 'Siemens', 'Kelvinator', 'Videocon', 'Onida', 'Toshiba', 'Electrolux', 
+    #         'Sharp', 'Intex', 'Sansui', 'Mitashi', 'Blue Star', 'Croma', 'Lloyd', 'Kenstar'
+    #     ],
+    #     "searchKey":"refrigerator",
+    #     "getRow": lambda row: giveMeProductRow('REFRIGERATOR',row)
+    # },
+    # {
+    #     "brands":[
+    #         'Samsung', 'Haier', 'Panasonic','Onida',
+    #         'Toshiba', 'Intex', 'Lloyd', 'realme', 'Mi',
+    #         'OnePlus', 'Sony', 'Vu', 'Thomson', 'Motorola',
+    #         'Infinix', 'Tcl', 'Iffalcon', 'Acer', 'Micromax',
+    #         'Nokia',  'Philips', 'Bpl', 'Itel',
+    #     ],
+    #     "searchKey":"tv",
+    #     "getRow": lambda row: giveMeProductRow('TV',row)
+    # },
     {
-        "brands":[ 
-            "Acer", "Apple","Asus","BlackBerry","Celkon","Gionee","Google",
-            "Haier","Honor","HP","HTC","Huawei","Infinix","Intex","Karbonn",
-            "Lava","Lenovo","LG","Micromax","Microsoft","Motorola","Nokia","Nothing",
-            "OnePlus","Oppo","Panasonic","Philips","Realme","Samsung","Sony",
-            "Spice","TCL","Tecno","vivo","Xiaomi","XOLO","YU","ZTE"
-        ],
-        "searchKey":"mobiles",
-        "getRow": lambda row: giveMeProductRow('MOBILE',row)
-    },
-    {
-        "brands":[ 
-            "Daikin","Voltas","Blue Star","LG","Hitachi","Carrier","Samsung","Whirlpool",
-            "Godrej","Mitsubishi Electric","Panasonic","Lloyd","Haier","O General","Onida",
-            "IFB","Sharp","TCL","Sanyo","Videocon"
-        ],
-        "searchKey":"ac",
-        "getRow": lambda row: giveMeProductRow('AC',row)
-    },
-    {
+        "brands": ['Hp'],
         "brands":[
-            'LG', 'Samsung', 'Whirlpool', 'Haier', 'Godrej', 'Bosch', 'Panasonic', 'Voltas', 
-            'Hitachi', 'IFB', 'Siemens', 'Kelvinator', 'Videocon', 'Onida', 'Toshiba', 'Electrolux', 
-            'Sharp', 'Intex', 'Sansui', 'Mitashi', 'Blue Star', 'Croma', 'Lloyd', 'Kenstar'
+            'Hp', 'Asus', 'Lenovo', 'Dell', 'Msi',
+            'Apple', 'Avita', 'Acer', 'Samsung', 'Infinix',
+            'Realme', 'Gigabyte', 'Vaio', 'Primebook', 'Alienware',
+            'Smartron', 'Microsoft', 'Lg Gram',  
         ],
-        "searchKey":"refrigerator",
-        "getRow": lambda row: giveMeProductRow('REFRIGERATOR',row)
+        "searchKey":"laptop",
+        "getRow": lambda row: giveMeProductRow('LAPTOP',row)
     },
 ]
-
