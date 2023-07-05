@@ -6,17 +6,18 @@ from dotenv import load_dotenv
 
 MONGO_URI = os.getenv("MONGO_URI")
 
-# Connect to the MongoDB server
-client = MongoClient(MONGO_URI)
-# Access the database and collection
-db = client['prodkt-product-master-v1']
-collection = db['Products']
-
 def insertProduct(data):
     try:
         if data == False:
             print(f"Nothing to Insert")
             return False
+
+        # Connect to the MongoDB server
+        client = MongoClient(MONGO_URI)
+
+        # Access the database and collection
+        db = client['prodkt-product-master-v1']
+        collection = db['Products']
 
         # Define the filter to find the document to update
         filter = data.get('filter',{'model':data.get('model','')})
@@ -41,9 +42,11 @@ def insertProduct(data):
             else:
                 print(f"Failed to insert Product.")
 
+        # Close the connection
+        client.close()
+
     except Exception as e:
         print(f"Error insertProduct: {str(e)}")
         print(f"data: {data}")
         time.sleep(30)
-        insertProduct(data)
-        # threading.Thread(target=insertProduct,args=(data)).start()
+        threading.Thread(target=insertProduct,args=(data)).start()
