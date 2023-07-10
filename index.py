@@ -1,7 +1,7 @@
 import threading
 from flask import Flask,jsonify
 from scrapper import scrapProduct
-
+from connection import Mongo
 app = Flask(__name__)
 
 @app.route("/sync")
@@ -16,3 +16,4 @@ def health():
         "message": "Server is running...."
     }
     
+app.config['DEBUG'] = True

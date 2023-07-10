@@ -1,2 +1,5 @@
 .env
 temp.py
+scrap
+__pycache__
+.vscode
