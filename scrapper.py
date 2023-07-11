@@ -6,7 +6,7 @@ from utils import productData
 from insertData import insertProduct
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
-from connection import client
+from connection import client, products_collection
 from multiprocessing import Process
 
 data=[]
@@ -47,6 +47,12 @@ def getDataFromProductLink(link, value, massage):
         product={} 
         parsed_url = urlparse(base_url+link)
         product['pid'] = parse_qs(parsed_url.query)['pid'][0]
+        filter = {'PID': product['pid']}
+        isExist = products_collection.find_one(filter)
+        if isExist is not None:
+            print(f"Product Already Exists: PID : {product['pid']}")
+            return 
+
         product['brand_name'] = value
         product_page=requests.get(base_url+link)
         product_soup=BeautifulSoup(product_page.content,"html.parser")
@@ -119,7 +125,7 @@ def getDataFromProductLink(link, value, massage):
         print(f"Error getDataFromProductLink: {str(e)}")
         print(f"link: {link}")
         time.sleep(30)
-        getDataFromProductLink(link, massage)
+        getDataFromProductLink(link, value, massage)
 
 def productDetails(url, massage, callBack):
     next_link=""
@@ -185,7 +191,7 @@ def scrapProductLink(product_links, massage, value, callBack):
         getDataFromProductLink(link['href'], value, massage)
     callBack()
 
-def scrapProductDetails(brands, searchKey, getRow):
+def scrapBrandDetails(brands, searchKey, getRow):
     threads = []
     for value in brands:
         q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false"
@@ -204,9 +210,7 @@ def scrapProductDetails(brands, searchKey, getRow):
 
 def scrapProduct():
     for product in productData:
-        scrapProductDetails(product['brands'], product['searchKey'], product['getRow'])
-    
-
+        scrapBrandDetails(product['brands'], product['searchKey'], product['getRow'])
     print("All Threads started:")
     client.Close()
     return {"message":"Product Data Synced!"}    
