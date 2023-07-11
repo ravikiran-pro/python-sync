@@ -32,6 +32,7 @@ def giveMeProductRow(dataType,row):
         'specifications': specifications,
         'category_id': brands[row['brand_name']]['category_id'],
         'product_type_id': brands[row['brand_name']]['product_type_id'],
+        'brand_id': brands[row['brand_name']]['brand_id'],
         'PID': row['pid'],
         'is_active': True,
         'created_at': iso_string,

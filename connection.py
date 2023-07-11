@@ -23,6 +23,7 @@ class Mongo():
                 'name': brand['name'],
                 'product_type_id': str(brand['product_type_id']),
                 'category_id': str(brand['category_id']),
+                'brand_id': str(brand['_id']),
             } 
         self.brands = data
         return self.brands
