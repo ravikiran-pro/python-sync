@@ -7,9 +7,12 @@ from insertData import insertProduct
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from connection import client
+from multiprocessing import Process
 
 data=[]
 base_url="https://www.flipkart.com"
+thread_count = 0
+max_thread_count = 25
 
 def getText(element):
     if(element):
@@ -160,19 +163,18 @@ class BaseThread():
         self.brand_product_links = 0
         self.target = target
         self.value = value
-        self.threads = []
 
     def start(self):
-        return threading.Thread( target=self.target, args=(self.url, self.getRow, self.callBack))
+        return Process( target=self.target, args=(self.url, self.getRow, self.callBack))
 
     def callBack(self, product_links):
         self.brand_product_links += len(product_links)
-        self.threads.append(threading.Thread(
+        process = Process(
             target= scrapProductLink,
             args= (product_links, self.getRow, self.value, self.end)
-        ))
-        self.threads[-1].start()
-        self.threads[-1].join()
+        )
+        process.start()
+        process.join()
 
     def end(self):
         print(f"total products found in ${self.value}: {self.brand_product_links}")
