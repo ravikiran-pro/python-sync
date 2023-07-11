@@ -4,7 +4,7 @@ from scrapper import scrapProduct
 from connection import Mongo
 app = Flask(__name__)
 
-@app.route("/sync")
+@app.route("/sync", methods= ['POST'])
 def hello_world():
     threading.Thread(target=scrapProduct).start()
     return jsonify({
