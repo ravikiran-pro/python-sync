@@ -45,6 +45,7 @@ def giveMeProductRow(dataType,row):
             return False
         newRow['brand']= row['model_name'].split(' ')[0].strip()
         newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Number',"")
         newRow['suggestion']= row['model_name'].split('(')[0].strip() + ' ' + specifications['RAM'].replace(' ', '').lower()+' '+specifications['Storage'].replace(' ', '').lower() +' '+specifications['Color'].lower()
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
@@ -54,7 +55,6 @@ def giveMeProductRow(dataType,row):
             'specifications.Color': specifications.get('Color','NA'),
             'specifications.Storage': specifications.get('Storage','NA'),
         }
-        return newRow
 
     if dataType == 'AC':
         if specifications.get('Type') not in ['Window', 'Split']:
@@ -63,7 +63,7 @@ def giveMeProductRow(dataType,row):
         newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['suggestion']= row.get('specs', {}).get('Brand',"")+ ' ' + specifications["Type"]+' ac '+specifications["Capacity"].lower()
         newRow['filter'] = {
-            'model_no': newRow.get('model_no',''),
+            'model_no': newRow.get('model',''),
             'model': newRow.get('model',''),
             'brand': newRow['brand'],
             'specifications.Type': specifications.get('Type','NA'),
@@ -71,7 +71,6 @@ def giveMeProductRow(dataType,row):
             'specifications.Capacity': specifications.get('Capacity','NA'),
             'specifications.Rating': specifications.get('Rating','NA'),
         }
-        return newRow
     
     if dataType == 'REFRIGERATOR':
         if specifications.get('Type','') == '' and specifications.get('Doors','') == '':
@@ -91,16 +90,13 @@ def giveMeProductRow(dataType,row):
             'specifications.Rating': specifications.get('Rating','NA'),
             'specifications.Color': specifications.get('Color','NA'),
         }
-        return newRow
-
 
     if dataType == 'TV':    
         if specifications.get('Type','') == '' and specifications.get('Size','') == '':
             return False
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('model_name', {}).split(" (", 1)[0]
-        newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
-        newRow['model_no']= newRow['model_no'][0] or row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         resolution = specifications['Resolution'].lower()
         if (resolution):
@@ -116,7 +112,6 @@ def giveMeProductRow(dataType,row):
             'specifications.Size': specifications.get('Size','NA'),
             'specifications.Resolution': resolution or 'NA',
         }
-        return newRow
 
     if dataType == 'LAPTOP':    
         if specifications.get('Ram','') == '' and specifications.get('Processor','') == '':
@@ -124,7 +119,6 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',""),
         newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
-        newRow['model_no']= newRow['model_no'][0] or row.get('specs', {}).get('Model Name',"")
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -137,7 +131,6 @@ def giveMeProductRow(dataType,row):
             'specifications.Processor': specifications.get('Processor Name','NA'),
             'specifications.Ram': specifications.get('Ram','NA'),
         }
-        return newRow
     
     if dataType == 'TABLET':    
         if specifications.get('RAM','') == '' and specifications.get('Storage','') == '':
@@ -145,7 +138,6 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
-        newRow['model_no']= newRow['model_no'][0] or row.get('specs', {}).get('Model Name',"")
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -158,15 +150,13 @@ def giveMeProductRow(dataType,row):
             'specifications.Storage': specifications.get('Internal Storage','NA'),
             'specifications.Color': specifications.get('Color','NA'),
         }
-        return newRow
     
     if dataType == 'WASHING MACHINE':    
         if specifications.get('Load','') == '' and specifications.get('Capacity','') == '':
             return False
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
-        newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
-        newRow['model_no']= newRow['model_no'][0] or row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -179,34 +169,30 @@ def giveMeProductRow(dataType,row):
             'specifications.Capacity': specifications.get('Washing Capacity','NA'),
             'specifications.Color': specifications.get('Color','NA'),
         }
-        return newRow
     
     if dataType == 'PRINTER SCANNERS':    
         if specifications.get('Type','') == '':
             return False
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
-        newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
-        newRow['model_no']= newRow['model_no'][0] or row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
         newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Type'].replace(' ', '').lower()
         newRow['filter'] = {
-            # 'model_no': newRow.get('model_no',''),
+            'model_no': newRow.get('model_no',''),
             'model': newRow.get('model',''),
             'brand': newRow['brand'],
             'specifications.Type': specifications.get('Printing Method','NA'),
         }
-        return newRow
     
     if dataType == 'CHIMNEY':  
         if specifications.get('Mount_type','') == '':
             return False  
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
-        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model']= row.get('model_name', {}).split('(')[1].split(')')[0]
         newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
-        newRow['model_no']= newRow['model_no'][0] or row.get('specs', {}).get('Model Name',"")
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -218,16 +204,13 @@ def giveMeProductRow(dataType,row):
             'specifications.Mount_type': specifications.get('Mount_type','NA'),
             'specifications.Color': specifications.get('Color','NA'),
         }
-        return newRow
-
     
     if dataType == 'WATER PURIFIER': 
         if specifications.get('Capacity','') == '':
             return False     
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
-        newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
-        newRow['model_no']= newRow['model_no'][0] or row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -239,7 +222,11 @@ def giveMeProductRow(dataType,row):
             'specifications.Capacity': specifications.get('Total Capacity','NA'),
             'specifications.Color': specifications.get('Color','NA'),
         }
-        return newRow
+
+
+    newRow['model_no'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model_no']
+    newRow['model'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model_no']
+    return newRow
 
 def giveMeSpecification(dataType, row):
 
