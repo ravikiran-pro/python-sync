@@ -46,6 +46,7 @@ def getDataFromProductLink(link, value, massage):
     try:    
         product={} 
         parsed_url = urlparse(base_url+link)
+        product['url'] = base_url+link
         product['pid'] = parse_qs(parsed_url.query)['pid'][0]
         filter = {'PID': product['pid']}
         isExist = products_collection.find_one(filter)
