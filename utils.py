@@ -65,6 +65,7 @@ def giveMeProductRow(dataType,row):
             return False
         newRow['brand']= row.get('specs', {}).get('Brand',"")
         newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= newRow['model'][newRow['model'].find("(")+1:newRow['model'].find(")")]
         newRow['suggestion']= row.get('specs', {}).get('Brand',"")+ ' ' + specifications["Type"]+' ac '+specifications["Capacity"].lower()
         newRow['product_type_id'] = '61645a921082c438b19ad844'
         newRow['category_id'] = '61645a921082c438b19ad831'
