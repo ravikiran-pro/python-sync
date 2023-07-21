@@ -14,6 +14,10 @@ class Mongo():
         self.products_collection = self.db['Products']
         return self.products_collection
 
+    def getBrandCategoryCount(self, filter):
+        count = self.products_collection.find(filter).explain().get("executionStats", {}).get("nReturned")
+        return count
+    
     def getBrandsList(self):
         brands_collection = self.db['Brands']
         brands = brands_collection.find({})
@@ -34,4 +38,3 @@ class Mongo():
 client = Mongo()
 products_collection = client.getProductsConnection()
 brands = client.getBrandsList()
-print(brands)

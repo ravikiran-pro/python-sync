@@ -1,5 +1,6 @@
 from datetime import datetime
 from connection import brands
+import json
 
 current_datetime = datetime.now()
 iso_string = current_datetime.isoformat()
@@ -27,17 +28,18 @@ def giveMeProductRow(dataType,row):
             'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
             'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
         },
+        'product_link': row['url'],
         'img': row['images'][0] if row['images'] else 'https://prodkt-master.objectstore.e2enetworks.net/ProductPlaceholder.svg',
         'suggestion':"",
         'specifications': specifications,
-        'category_id': brands[row['brand_name']]['category_id'],
-        'product_type_id': brands[row['brand_name']]['product_type_id'],
+        # 'category_id': brands[row['brand_name']]['category_id'],
+        # 'product_type_id': brands[row['brand_name']]['product_type_id'],
         'brand_id': brands[row['brand_name']]['brand_id'],
         'PID': row['pid'],
         'is_active': True,
         'created_at': iso_string,
         'updated_at': iso_string,
-        'scrap': None
+        'scrap': json.dumps(row)
     }
 
     if dataType == 'MOBILE':
@@ -47,6 +49,8 @@ def giveMeProductRow(dataType,row):
         newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['model_no']= row.get('specs', {}).get('Model Number',"")
         newRow['suggestion']= row['model_name'].split('(')[0].strip() + ' ' + specifications['RAM'].replace(' ', '').lower()+' '+specifications['Storage'].replace(' ', '').lower() +' '+specifications['Color'].lower()
+        newRow['product_type_id'] = '61645a921082c438b19ad835'
+        newRow['category_id'] = '61645a921082c438b19ad830'
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
             'model': newRow.get('model',''),
@@ -61,7 +65,10 @@ def giveMeProductRow(dataType,row):
             return False
         newRow['brand']= row.get('specs', {}).get('Brand',"")
         newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= newRow['model'][newRow['model'].find("(")+1:newRow['model'].find(")")]
         newRow['suggestion']= row.get('specs', {}).get('Brand',"")+ ' ' + specifications["Type"]+' ac '+specifications["Capacity"].lower()
+        newRow['product_type_id'] = '61645a921082c438b19ad844'
+        newRow['category_id'] = '61645a921082c438b19ad831'
         newRow['filter'] = {
             'model_no': newRow.get('model',''),
             'model': newRow.get('model',''),
@@ -80,6 +87,8 @@ def giveMeProductRow(dataType,row):
         newRow['model_no']= row.get('model_name', {}).split(",")[-1].strip()[:-1]
         newRow['warranty_coverage']= row.get('specs',{}).get('Warranty Summary',"").split('Warranty')[0].strip()
         newRow['suggestion']= newRow['brand'] + ' refrigerator ' + specifications["Capacity"].lower() + ' ' + specifications["Type"].lower() + ' ' + specifications["Rating"] + ' star'
+        newRow['product_type_id'] = '61645a921082c438b19ad841'
+        newRow['category_id'] = '61645a921082c438b19ad831'
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
             'model': newRow.get('model',''),
@@ -97,6 +106,8 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('model_name', {}).split(" (", 1)[0]
         newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad845'
+        newRow['category_id'] = '61645a921082c438b19ad831'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         resolution = specifications['Resolution'].lower()
         if (resolution):
@@ -119,6 +130,8 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',""),
         newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
+        newRow['product_type_id'] = '61645a921082c438b19ad836'
+        newRow['category_id'] = '61645a921082c438b19ad830'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -138,6 +151,8 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
+        newRow['product_type_id'] = '61645a921082c438b19ad838'
+        newRow['category_id'] = '61645a921082c438b19ad830'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -157,6 +172,8 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad842'
+        newRow['category_id'] = '61645a921082c438b19ad831'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -176,6 +193,8 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad83a'
+        newRow['category_id'] = '61645a921082c438b19ad830'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -193,6 +212,8 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('model_name', {}).split('(')[1].split(')')[0]
         newRow['model_no']= row.get('specs', {}).get('Model Number',"").split(" (", 1)[0],
+        newRow['product_type_id'] = '61645a921082c438b19ad846'
+        newRow['category_id'] = '61645a921082c438b19ad831'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
@@ -211,6 +232,8 @@ def giveMeProductRow(dataType,row):
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
         newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad847'
+        newRow['category_id'] = '61645a921082c438b19ad831'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
