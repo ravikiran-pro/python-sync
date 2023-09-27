@@ -17,7 +17,7 @@ def giveMeProductRow(dataType,row):
     newRow = {
         'name': row['model_name'],
         'brand': "",
-        'model':"",
+        'model': "",
         'model_no': row.get('specs',{}).get('Model Number',""),
         'brand_image': row.get('brand_image',''),
         'description': row['description'],
@@ -32,8 +32,6 @@ def giveMeProductRow(dataType,row):
         'img': row['images'][0] if row['images'] else 'https://prodkt-master.objectstore.e2enetworks.net/ProductPlaceholder.svg',
         'suggestion':"",
         'specifications': specifications,
-        # 'category_id': brands[row['brand_name']]['category_id'],
-        # 'product_type_id': brands[row['brand_name']]['product_type_id'],
         'brand_id': brands[row['brand_name']]['brand_id'],
         'PID': row['pid'],
         'is_active': True,
@@ -187,7 +185,7 @@ def giveMeProductRow(dataType,row):
             'specifications.Color': specifications.get('Color','NA'),
         }
     
-    if dataType == 'PRINTER SCANNERS':    
+    if dataType == 'PRINTER':    
         if specifications.get('Type','') == '':
             return False
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
@@ -246,7 +244,23 @@ def giveMeProductRow(dataType,row):
             'specifications.Color': specifications.get('Color','NA'),
         }
 
-
+    if dataType == 'SMART WATCH':
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad837'
+        newRow['category_id'] = '61645a921082c438b19ad830'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Capacity'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+        
     newRow['model_no'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model_no']
     newRow['model'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model_no']
     return newRow
@@ -314,7 +328,7 @@ def giveMeSpecification(dataType, row):
     pass
 
 
-    if dataType == 'PRINTER SCANNERS':
+    if dataType == 'PRINTER':
         return {
            'Type': row.get('specs', {}).get('Printing Method', ''),
         }
@@ -335,6 +349,12 @@ def giveMeSpecification(dataType, row):
         }
     pass
 
+    if dataType == 'SMART WATCH':
+        return  {
+            'Color': row.get('specs',{}).get('Strap Color','')
+        }
+    pass
+
     return {}
 
 productData = [
@@ -347,7 +367,8 @@ productData = [
             "Spice","TCL","Tecno","vivo","Xiaomi","XOLO","YU","ZTE"
         ],
         "searchKey":"mobile",
-        "getRow": lambda row: giveMeProductRow('MOBILE',row)
+        "getRow": lambda row: giveMeProductRow('MOBILE',row),
+        "type": "MOBILE"
     },
     {
         "brands":[ 
@@ -356,7 +377,8 @@ productData = [
             "IFB","Sharp","TCL","Sanyo","Videocon"
         ],
         "searchKey":"ac",
-        "getRow": lambda row: giveMeProductRow('AC',row)
+        "getRow": lambda row: giveMeProductRow('AC',row),
+        "type": "AC"
     },
     {
         "brands":[
@@ -365,7 +387,8 @@ productData = [
             'Sharp', 'Intex', 'Sansui', 'Mitashi', 'Blue Star', 'Croma', 'Lloyd', 'Kenstar'
         ],
         "searchKey":"refrigerator",
-        "getRow": lambda row: giveMeProductRow('REFRIGERATOR',row)
+        "getRow": lambda row: giveMeProductRow('REFRIGERATOR',row),
+        "type": "REFRIGERATOR"
     },
     {
         "brands":[
@@ -376,7 +399,8 @@ productData = [
             'Nokia',  'Philips', 'Bpl', 'Itel',
         ],
         "searchKey":"tv",
-        "getRow": lambda row: giveMeProductRow('TV',row)
+        "getRow": lambda row: giveMeProductRow('TV',row),
+        "type": "TV"
     },
     {
         "brands":[
@@ -386,7 +410,8 @@ productData = [
             'Smartron', 'Microsoft', 'Lg Gram',  
         ],
         "searchKey":"laptop",
-        "getRow": lambda row: giveMeProductRow('LAPTOP',row)
+        "getRow": lambda row: giveMeProductRow('LAPTOP',row),
+        "type": "LAPTOP"
     },
     {
         "brands":[
@@ -396,7 +421,8 @@ productData = [
             'Alcatel', 'Iball', 'Honor', 'Motorola',
               ],
         "searchKey":"tablet",
-        "getRow": lambda row: giveMeProductRow('TABLET',row)
+        "getRow": lambda row: giveMeProductRow('TABLET',row),
+        "type": "TABLET"
     },
     {
         "brands":[
@@ -405,15 +431,17 @@ productData = [
              'Haier', 'Lloyd', 'Onida', 
               ],
         "searchKey":"washing machine",
-        "getRow": lambda row: giveMeProductRow('WASHING MACHINE',row)
+        "getRow": lambda row: giveMeProductRow('WASHING MACHINE',row),
+        "type": "WASHING MACHINE"
     },
     {
         "brands":[
-             'HP', 'Epson', 'Canon', 'brother', 'PANTUM',
-             'Xerox', 'SAMSUNG', 
-              ],
-        "searchKey":"printer scanners",
-        "getRow": lambda row: giveMeProductRow('PRINTER SCANNERS',row)
+             'HP','Canon','Epson','KODAK','PANTUM','Brother','TVS ELECTRONICS','KYOCERA','Zebra','CPS',
+            'Lenmark','KonicaMinolta','Samsung'
+        ],
+        "searchKey":"printer",
+        "getRow": lambda row: giveMeProductRow('PRINTER',row),
+        "type": "PRINTER"
     },
     {
         "brands":[
@@ -422,7 +450,20 @@ productData = [
              'V-Guard',        
                ],
         "searchKey":"Chimney",
-        "getRow": lambda row: giveMeProductRow('CHIMNEY',row)
+        "getRow": lambda row: giveMeProductRow('CHIMNEY',row),
+        "type": "CHIMNEY"
+    },
+    {
+        "brands": [
+            "boAt", "Noise", "Amazfit", "Samsung", "CrossBeats", "Spigen", "Garmin", "beatXP",
+            "Pebble", "TAGG", "HAMMER", "Fastrack", "ZEBRONICS", "GIZMORE", "Fitbit", "Apple",
+            "Vibez", "Helix", "Maxima", "sekyo", "AJO", "Fitshot", "Casio", "Fire-Boltt", "Titan",
+            "Fastrack", "Fossil", "SKMEI", "TIMEX", "Sonata", "Spigen", "Chumbak", "Citizen", "REDUX",
+            "ADAMO", "Garmin", "HAMMER", "Tommy Hilfiger", "LORENZ", "Diesel",
+        ],
+        "searchKey":"smart watch",
+        "getRow": lambda row: giveMeProductRow('SMART WATCH',row),
+        "type": "SMART WATCH"
     },
     {
         "brands":[
@@ -448,6 +489,7 @@ productData = [
              'HIMAJAL', 'Feelpure', 'FESCHON',       
                ],      
         "searchKey":"Water purifier",
-        "getRow": lambda row: giveMeProductRow('WATER PURIFIER',row)
+        "getRow": lambda row: giveMeProductRow('WATER PURIFIER',row),
+        "type": "WATER PURIFIER"
     },
 ]

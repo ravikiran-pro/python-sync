@@ -172,16 +172,18 @@ class BaseThread():
         self.value = value
 
     def start(self):
-        return Process( target=self.target, args=(self.url, self.getRow, self.callBack))
+        # return Process( target=self.target, args=(self.url, self.getRow, self.callBack))
+        self.target(self.url, self.getRow, self.callBack)
 
     def callBack(self, product_links):
         self.brand_product_links += len(product_links)
-        process = Process(
-            target= scrapProductLink,
-            args= (product_links, self.getRow, self.value, self.end)
-        )
-        process.start()
-        process.join()
+        scrapProductLink(product_links, self.getRow, self.value, self.end)
+        # process = Process(
+        #     target= scrapProductLink,
+        #     args= (product_links, self.getRow, self.value, self.end)
+        # )
+        # process.start()
+        # process.join()
 
     def end(self):
         print(f"total products found in ${self.value}: {self.brand_product_links}")
@@ -204,14 +206,18 @@ def scrapBrandDetails(brands, searchKey, getRow):
                 value = value,
                 getRow = getRow
             )
-        threads.append(baseThread.start())
-        threads[-1].start()
-    for t in threads:                                                           
-        t.join() 
+        # threads.append(baseThread.start())
+        baseThread.start()
+    #     threads[-1].start()
+    # for t in threads:                                                           
+    #     t.join() 
 
 def scrapProduct():
     for product in productData:
-        scrapBrandDetails(product['brands'], product['searchKey'], product['getRow'])
+        if product['type'] == 'PRINTER':
+            scrapBrandDetails(product['brands'], product['searchKey'], product['getRow'])
+        elif product["type"] == 'SMART WATCH':
+            scrapBrandDetails(product['brands'], product['searchKey'], product['getRow'])
     print("All Threads started:")
     client.Close()
     return {"message":"Product Data Synced!"}    

@@ -9,7 +9,7 @@ import json
 app = Flask(__name__)
 
 @app.route("/sync", methods= ['POST'])
-def hello_world():
+def scrap():
     threading.Thread(target=scrapProduct).start()
     return jsonify({
         "message": "Product Data Sync Started!"

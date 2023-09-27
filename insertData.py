@@ -7,6 +7,7 @@ def insertProduct(data):
             print(f"Nothing to Insert")
             return False
 
+        print("Inserting....")
         # Insert the document into the products_collection
         insert_result = products_collection.insert_one(data)
         # Check if the insertion was successful
