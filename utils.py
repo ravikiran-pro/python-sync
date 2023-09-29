@@ -245,15 +245,16 @@ def giveMeProductRow(dataType,row):
         }
 
     if dataType == 'SMART WATCH':
+        newRow['brand_id']=""
         newRow['brand']= row.get('model_name', {}).split(" ")[0]
         newRow['model']= row.get('specs', {}).get('Model Name',"")
-        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Number',"")
         newRow['product_type_id'] = '61645a921082c438b19ad837'
         newRow['category_id'] = '61645a921082c438b19ad830'
         warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
         if (warranty_coverage):
             newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
-        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Capacity'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['suggestion']= newRow['name'].split('(')[0].strip() 
         newRow['filter'] = {
             'model_no': newRow.get('model_no',''),
             'model': newRow.get('model',''),
@@ -262,7 +263,7 @@ def giveMeProductRow(dataType,row):
         }
         
     newRow['model_no'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model_no']
-    newRow['model'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model_no']
+    newRow['model'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model']
     return newRow
 
 def giveMeSpecification(dataType, row):
@@ -436,10 +437,10 @@ productData = [
     },
     {
         "brands":[
-             'HP','Canon','Epson','KODAK','PANTUM','Brother','TVS ELECTRONICS','KYOCERA','Zebra','CPS',
+             'HP','Canon','Epson','PANTUM','Brother','TVS ELECTRONICS','CPS',
             'Lenmark','KonicaMinolta','Samsung'
         ],
-        "searchKey":"printer",
+        "searchKey":"printers only",
         "getRow": lambda row: giveMeProductRow('PRINTER',row),
         "type": "PRINTER"
     },
@@ -458,8 +459,8 @@ productData = [
             "boAt", "Noise", "Amazfit", "Samsung", "CrossBeats", "Spigen", "Garmin", "beatXP",
             "Pebble", "TAGG", "HAMMER", "Fastrack", "ZEBRONICS", "GIZMORE", "Fitbit", "Apple",
             "Vibez", "Helix", "Maxima", "sekyo", "AJO", "Fitshot", "Casio", "Fire-Boltt", "Titan",
-            "Fastrack", "Fossil", "SKMEI", "TIMEX", "Sonata", "Spigen", "Chumbak", "Citizen", "REDUX",
-            "ADAMO", "Garmin", "HAMMER", "Tommy Hilfiger", "LORENZ", "Diesel",
+            "Fossil", "TIMEX","Sonata",  "Diesel",
+            # "SKMEI",   "Chumbak", "Citizen","ADAMO", "Tommy Hilfiger", "LORENZ", "REDUX",
         ],
         "searchKey":"smart watch",
         "getRow": lambda row: giveMeProductRow('SMART WATCH',row),
