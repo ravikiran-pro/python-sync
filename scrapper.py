@@ -42,7 +42,7 @@ def getGridData(element):
     details["description"]=getText(element.find("div",class_="_1AN87F"))
     return details
 
-def getDataFromProductLink(link, value, massage):
+def getDataFromProductLink(link,type, value, massage):
     try:    
         product={} 
         parsed_url = urlparse(base_url+link)
@@ -57,6 +57,30 @@ def getDataFromProductLink(link, value, massage):
         product['brand_name'] = value
         product_page=requests.get(base_url+link)
         product_soup=BeautifulSoup(product_page.content,"html.parser")
+
+        if type=='PRINTER':
+            a_element = product_soup.find('div', class_='_3GIHBu').find('a', class_='_2whKao')
+
+            if a_element:
+                if ("Printers"!= a_element.text):
+                    print("--Skip other then Printer-----",a_element.text)
+                    return
+                elif a_element is None:
+                    print("--Skip if category is None-----",a_element)
+                    return
+                
+        elif type=='SMART WATCH':
+            a_element = product_soup.find('a', class_='_2whKao', text='Smart Watches')
+
+            if a_element:
+                if ("Smart Watches"!= a_element.text):
+                    print("--Skip other then Smart Watches-----",a_element.text)
+                    return
+            elif a_element is None:
+                 print("--Skip if category is None-----",a_element)
+                 return
+            
+
         product_images=product_soup.find_all("img",class_="q6DClP",src=True)
         brand_image_div=product_soup.find_all("div",class_="_3nWYNs")
         brand_image=''
@@ -164,12 +188,13 @@ def productDetails(url, massage, callBack):
         print(f"massage: {str(massage)}")
 
 class BaseThread():
-    def __init__(self, target, url, value, getRow):
+    def __init__(self,type, target, url, value, getRow):
         self.url = url
         self.getRow = getRow
         self.brand_product_links = 0
         self.target = target
         self.value = value
+        self.type=type
 
     def start(self):
         # return Process( target=self.target, args=(self.url, self.getRow, self.callBack))
@@ -177,7 +202,7 @@ class BaseThread():
 
     def callBack(self, product_links):
         self.brand_product_links += len(product_links)
-        scrapProductLink(product_links, self.getRow, self.value, self.end)
+        scrapProductLink(product_links,self.type, self.getRow, self.value, self.end)
         # process = Process(
         #     target= scrapProductLink,
         #     args= (product_links, self.getRow, self.value, self.end)
@@ -189,19 +214,27 @@ class BaseThread():
         print(f"total products found in ${self.value}: {self.brand_product_links}")
         
 
-def scrapProductLink(product_links, massage, value, callBack):
+def scrapProductLink(product_links,type, massage, value, callBack):
     for link in product_links:
-        getDataFromProductLink(link['href'], value, massage)
+        getDataFromProductLink(link['href'],type, value, massage)
     callBack()
 
-def scrapBrandDetails(brands, searchKey, getRow):
+def scrapBrandDetails(brands,type, searchKey, getRow):
     threads = []
     for value in brands:
-        q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false"
-        url = base_url+"/search?q="+str(q)
+        if type=='SMART WATCH':
+            
+             q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false&p%5B%5D=facets.brand%255B%255D%3D"+value
+             url = base_url+"/search?q="+str(q)
+
+        else:        
+            q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false"
+            url = base_url+"/search?q="+str(q)
+            
         print(f"Scraping thread of : {value} started \n base url: ${url}")
         baseThread = BaseThread(
                 target=productDetails, 
+                type=type,
                 url = url, 
                 value = value,
                 getRow = getRow
@@ -215,9 +248,9 @@ def scrapBrandDetails(brands, searchKey, getRow):
 def scrapProduct():
     for product in productData:
         if product['type'] == 'PRINTER':
-            scrapBrandDetails(product['brands'], product['searchKey'], product['getRow'])
+            scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
         elif product["type"] == 'SMART WATCH':
-            scrapBrandDetails(product['brands'], product['searchKey'], product['getRow'])
+            scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
     print("All Threads started:")
     client.Close()
     return {"message":"Product Data Synced!"}    
