@@ -1,6 +1,8 @@
 from datetime import datetime
 from connection import brands
 import json
+import re
+
 
 current_datetime = datetime.now()
 iso_string = current_datetime.isoformat()
@@ -32,13 +34,30 @@ def giveMeProductRow(dataType,row):
         'img': row['images'][0] if row['images'] else 'https://prodkt-master.objectstore.e2enetworks.net/ProductPlaceholder.svg',
         'suggestion':"",
         'specifications': specifications,
-        'brand_id': brands[row['brand_name']]['brand_id'],
+        # 'brand_id': brands[row['brand_name']]['brand_id'],
         'PID': row['pid'],
         'is_active': True,
         'created_at': iso_string,
         'updated_at': iso_string,
         'scrap': json.dumps(row)
     }
+
+    if dataType == 'JUICER, MIXERS & GRINDERS':
+        newRow['product_type_id'] = '654e01776a319ec3faebe641'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        newRow['brand'] = row['brand_name']
+        if row['brand_name'] == 'Bajaj':
+            brand = row['brand_name'].upper()
+        elif row['brand_name'] == 'Wonderchef':
+            brand = row['brand_name'].upper()
+        else:
+            brand = row['brand_name']
+        match = re.search(rf'{re.escape(brand)}\s*(.*?)\s*(Mixer|Juicer)', row["model_name"])
+
+        model = ''
+        if match:
+            model = match.group(1).strip()
+        newRow['model']= model
 
     if dataType == 'MOBILE':
         if specifications.get('RAM','') == '' and specifications.get('Storage','') == '':
@@ -356,6 +375,12 @@ def giveMeSpecification(dataType, row):
         }
     pass
 
+    if dataType == "JUICER, MIXERS & GRINDERS":
+        return {
+            'Color': row['color'],
+            'Watt': row['Watt']
+        }
+
     return {}
 
 productData = [
@@ -493,4 +518,16 @@ productData = [
         "getRow": lambda row: giveMeProductRow('WATER PURIFIER',row),
         "type": "WATER PURIFIER"
     },
+    {
+        "brands": [
+            "Lifelong", "Prestige","PHILIPS", "Bajaj", "Wonderchef", "Bosch", "Butterfly", "Havells", "Preethi", "USHA", "Pigeon", "Morphy Richards", 
+            "Sujata", "Vidiem", "Faber", "amazon basics", "Crompton", "BOROSIL", "Orient Electric", "Amirthaa", "Thomson", "Premier", "SOWBAGHYA", "Panasonic",
+            "COOKWELL", "Maharaja Whiteline", "Inalsa", "PRINGLE", "BOSS",  "BAJAJ VACCO", "Swiss Military", "Lesco",
+            "STARGAZE", "InstaCuppa", "Greenchef", "Veronica", "RIEO", "Kutchina", "FLORITA", "Ketvin", "SmartFingers",
+            "MAYUMI", "Hamilton Beach", "KENT", "AGARO", "Rico", "SOLARA", "Ponmani"
+        ],
+        "searchKey":"Juicer, Mixers & grinders",
+        "getRow": lambda row: giveMeProductRow('JUICER, MIXERS & GRINDERS',row),
+        "type": "JUICER, MIXERS & GRINDERS"
+    }
 ]

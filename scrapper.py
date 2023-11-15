@@ -1,3 +1,4 @@
+import json
 import requests
 import threading
 import time
@@ -8,6 +9,9 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from connection import client, products_collection
 from multiprocessing import Process
+from bson import ObjectId
+import re
+
 
 data=[]
 base_url="https://www.flipkart.com"
@@ -55,9 +59,11 @@ def getDataFromProductLink(link,type, value, massage):
             return 
 
         product['brand_name'] = value
-        product_page=requests.get(base_url+link)
+        # product_page=requests.get(base_url+link) // Not working for the category Juicer,mixer & grinder
+        product_page=requests.post(base_url+link)
         product_soup=BeautifulSoup(product_page.content,"html.parser")
 
+        
         if type=='PRINTER':
             a_element = product_soup.find('div', class_='_3GIHBu').find('a', class_='_2whKao')
 
@@ -79,6 +85,9 @@ def getDataFromProductLink(link,type, value, massage):
             elif a_element is None:
                  print("--Skip if category is None-----",a_element)
                  return
+            
+        elif type=='JUICER, MIXERS & GRINDERS':
+            a_element = product_soup.find('a', class_='_2whKao', text='Mixer Juicer Grinder')
             
 
         product_images=product_soup.find_all("img",class_="q6DClP",src=True)
@@ -102,7 +111,7 @@ def getDataFromProductLink(link,type, value, massage):
         size=[]
         washing_capacity=[]
         wifi_connectivity=[]
-        li_tooltip=product_soup.find_all("li",class_="_3V2wfe") 
+        li_tooltip=product_soup.find_all("li",class_="_3V2wfe")
         for tool in li_tooltip:
             id=tool["id"]  
             if "storage" in id and tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM"):
@@ -122,6 +131,14 @@ def getDataFromProductLink(link,type, value, massage):
         table_elements=product_soup.findAll("table",class_="_14cfVK")
         specs={}
         details=getGridData(product_soup)
+        watt = None
+        for text in highlights:
+            match = re.search(r'(\d+(?:\s*W)?)\s*:\s*Higher the Wattage', text)
+            if match:
+                watt_value = match.group(1)
+                watt = watt_value
+                # print(watt)
+                break
         if(table_elements):
             for table in table_elements:
                 specs.update(getTableData(table))
@@ -143,6 +160,8 @@ def getDataFromProductLink(link,type, value, massage):
         product["highlights"]=highlights 
         product["specs"]=specs 
         product["details"]=details 
+        product["Watt"] = watt
+
         print(f"Inserting the scraped Data: {product['model_name']}")
         insertProduct(massage(product))
 
@@ -155,8 +174,9 @@ def getDataFromProductLink(link,type, value, massage):
 def productDetails(url, massage, callBack):
     next_link=""
     try: 
-        main_page=requests.get(url)
-        main_soup = BeautifulSoup(main_page.content, "html.parser")  
+        main_page=requests.post(url)
+        # main_page=requests.get(url) // Not working for the category Juicer,mixer & grinder
+        main_soup = BeautifulSoup(main_page.content, "html.parser")
         product_links=[]
         class1=main_soup.find_all("a",class_="_1fQZEK",href=True)
         class2=main_soup.find_all("a",class_="s1Q9rs",href=True)
@@ -227,6 +247,10 @@ def scrapBrandDetails(brands,type, searchKey, getRow):
              q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false&p%5B%5D=facets.brand%255B%255D%3D"+value
              url = base_url+"/search?q="+str(q)
 
+        if type == 'JUICER, MIXERS & GRINDERS':
+            q="all+"+value+"+"+ searchKey +"&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off&augment=false"
+            url = base_url+"/search?q="+str(q)
+
         else:        
             q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false"
             url = base_url+"/search?q="+str(q)
@@ -247,10 +271,12 @@ def scrapBrandDetails(brands,type, searchKey, getRow):
 
 def scrapProduct():
     for product in productData:
-        if product['type'] == 'PRINTER':
+        if product['type'] == 'JUICER, MIXERS & GRINDERS':
             scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
-        elif product["type"] == 'SMART WATCH':
-            scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
+        # if product['type'] == 'PRINTER':
+        #     scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
+        # elif product["type"] == 'SMART WATCH':
+        #     scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
     print("All Threads started:")
     client.Close()
     return {"message":"Product Data Synced!"}    
