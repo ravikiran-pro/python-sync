@@ -35,12 +35,27 @@ def giveMeProductRow(dataType,row):
         'suggestion':"",
         'specifications': specifications,
         # 'brand_id': brands[row['brand_name']]['brand_id'],
-        'PID': row['pid'],
+        # 'PID': row['pid'],
         'is_active': True,
         'created_at': iso_string,
         'updated_at': iso_string,
         'scrap': json.dumps(row)
     }
+
+    if dataType == 'Car':
+        newRow['product_type_id'] = '61645a921082c438b19ad832'
+        newRow['category_id'] = '61645a921082c438b19ad82f'
+        newRow['brand'] = row['brand_name']
+        newRow['model'] = row.get('model_name', {}).split(" (", 1)[0]
+        if newRow['brand'] == "Maruti Suzuki":
+            newRow['warranty_coverage'] = "3 Years/60,000 km"
+            newRow['warranty_details'] = {
+                'warranty_summary': row.get('specs',{}).get('Warranty Summary',""),
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://drive.google.com/file/d/1nVTllNFLbea0cPTC0kqpUCbZC-UfpKF6/view?usp=drive_link"
+            }
 
     if dataType == 'JUICER, MIXERS & GRINDERS':
         newRow['product_type_id'] = '654e01776a319ec3faebe641'
@@ -380,6 +395,16 @@ def giveMeSpecification(dataType, row):
             'Color': row['color'],
             'Watt': row['Watt']
         }
+    pass
+
+    if dataType == "Car":
+        return {
+            'Variant': row.get('model_name', ''),
+            'Fuel Type': row.get('specs', {}).get('Fuel Type', ''),
+            'Transmission': row.get('specs', {}).get('Transmission', ''),
+            'Color': row.get('color', [])
+        }
+    pass
 
     return {}
 
@@ -529,5 +554,11 @@ productData = [
         "searchKey":"Juicer, Mixers & grinders",
         "getRow": lambda row: giveMeProductRow('JUICER, MIXERS & GRINDERS',row),
         "type": "JUICER, MIXERS & GRINDERS"
+    },
+    {
+        # "brands": [],
+        "searchKey":"Car",
+        "getRow": lambda row: giveMeProductRow('Car',row),
+        "type": "Car"
     }
 ]

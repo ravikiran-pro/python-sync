@@ -14,7 +14,10 @@ import re
 
 
 data=[]
-base_url="https://www.flipkart.com"
+base_url="https://www.carwale.com"
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+
 thread_count = 0
 max_thread_count = 25
 
@@ -26,13 +29,11 @@ def getText(element):
 
 def getTableData(element):
     data_dict = {}
-    for row in element.find_all('tr'):
-        cells = row.find_all('td')
-        if len(cells) > 0: 
-            key = cells[0].text.strip()
-            if(key and len(cells) > 1):
-                value = cells[1].text.strip()
-                data_dict[key] = value
+    key = getText(element.find(class_="o-fHmpzP o-cpNAVm"))
+    value = getText(element.find(class_= "o-eZTujG"))
+    if key:
+        data_dict[key] = value
+
     return data_dict
 
 def getGridData(element): 
@@ -49,121 +50,73 @@ def getGridData(element):
 def getDataFromProductLink(link,type, value, massage):
     try:    
         product={} 
-        parsed_url = urlparse(base_url+link)
-        product['url'] = base_url+link
-        product['pid'] = parse_qs(parsed_url.query)['pid'][0]
-        filter = {'PID': product['pid']}
-        isExist = products_collection.find_one(filter)
-        if isExist is not None:
-            print(f"Product Already Exists: PID : {product['pid']}")
-            return 
-
-        product['brand_name'] = value
-        # product_page=requests.get(base_url+link) // Not working for the category Juicer,mixer & grinder
-        product_page=requests.post(base_url+link)
-        product_soup=BeautifulSoup(product_page.content,"html.parser")
-
+        parsed_url = base_url+link
+        product_page = requests.get(parsed_url, headers= headers)
+        prod_soup = BeautifulSoup(product_page.content, "html.parser")
+        product_varients = []
+        for varient in prod_soup.find_all('a', class_= "o-eZTujG o-jjpuv o-cVMLxW", href=True):
+            link = varient.get('href')
+            if link:
+                product_varients.append(link)
         
-        if type=='PRINTER':
-            a_element = product_soup.find('div', class_='_3GIHBu').find('a', class_='_2whKao')
+        for link in product_varients:
+            varient_url = base_url+link
+            varient_page = requests.get(varient_url, headers= headers)
+            product_soup = BeautifulSoup(varient_page.content, "html.parser")
+            product['url'] = varient_url
+            model_name=getText(product_soup.find("h1",class_="o-dOKno o-bNCMFw o-eqqVmt"))
+            filter = {'model': model_name}
+            isExist = products_collection.find_one(filter)
+            if isExist is not None:
+                print(f"Product Already Exists: Model : {model_name}")
+                return 
 
-            if a_element:
-                if ("Printers"!= a_element.text):
-                    print("--Skip other then Printer-----",a_element.text)
-                    return
-                elif a_element is None:
-                    print("--Skip if category is None-----",a_element)
-                    return
-                
-        elif type=='SMART WATCH':
-            a_element = product_soup.find('a', class_='_2whKao', text='Smart Watches')
+            product['brand_name'] = value
+            product_images=product_soup.find_all("div",class_="iyZWZe")
+            brand_image=''
+            if len(product_images):
+                brand_image= product_images[0].find_all("img")[0]['src']
 
-            if a_element:
-                if ("Smart Watches"!= a_element.text):
-                    print("--Skip other then Smart Watches-----",a_element.text)
-                    return
-            elif a_element is None:
-                 print("--Skip if category is None-----",a_element)
-                 return
-            
-        elif type=='JUICER, MIXERS & GRINDERS':
-            a_element = product_soup.find('a', class_='_2whKao', text='Mixer Juicer Grinder')
-            
+            description=getText(product_soup.find("div",class_="o-fzpilz o-bkmzIL o-cpNAVm o-fyWCgU vDnuC_"))
+            img=""
+            rating=getText(product_soup.find("p",class_="o-Hyyko o-fzoTsT o-eqqVmt o-cKuOoN o-lIIwF o-eZTujG"))
+            review=getText(product_soup.find("span",class_="o-fzptZU o-KxopV o-cpNAVm")) 
+            original_price=getText(product_soup.find("span",class_="o-Hyyko o-bPYcRG o-eqqVmt"))
 
-        product_images=product_soup.find_all("img",class_="q6DClP",src=True)
-        brand_image_div=product_soup.find_all("div",class_="_3nWYNs")
-        brand_image=''
-        if len(brand_image_div):
-            brand_image= brand_image_div[0].find_all("img")[0]['src']
-        model_name=getText(product_soup.find("span",class_="B_NuCI"))
-        description=getText(product_soup.find("div",class_="_1mXcCf RmoJUa"))
-        img=[image['src'] for image in product_images] 
-        rating=getText(product_soup.find("div",class_="_3LWZlK"))
-        review=getText(product_soup.find("span",class_="_2_R_DZ")) 
-        original_price=getText(product_soup.find("div",class_="_3I9_wc _2p6lqe"))
-        discount_price=getText(product_soup.find("div",class_="_30jeq3 _16Jk6d"))
-        discount_percent=getText(product_soup.find("div",class_="_3Ay6Sb _31Dcoz"))
-        if not original_price:
-            original_price=discount_price
-        storage=[]
-        color=[]
-        ram=[]
-        size=[]
-        washing_capacity=[]
-        wifi_connectivity=[]
-        li_tooltip=product_soup.find_all("li",class_="_3V2wfe")
-        for tool in li_tooltip:
-            id=tool["id"]  
-            if "storage" in id and tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM"):
-                storage.append(tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM").text)
-            if "ram" in id and tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM"):
-                ram.append(tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM").text)
-            if "color" in id and tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM"):
-                color.append(tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM").text)
-            if "size" in id and tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM"):
-                size.append(tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM").text)
-            if "washing_capacity" in id and tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM"):
-                washing_capacity.append(tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM").text)
-            if "wifi_connectivity" in id and tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM"): 
-                wifi_connectivity.append(tool.find("div",class_="_2OTVHf _3NVE7n _1mQK5h _2J-DXM").text)
-        highlights_element=product_soup.find_all("li",class_="_21Ahn-")
-        highlights=[h.text.strip() for h in highlights_element] 
-        table_elements=product_soup.findAll("table",class_="_14cfVK")
-        specs={}
-        details=getGridData(product_soup)
-        watt = None
-        for text in highlights:
-            match = re.search(r'(\d+(?:\s*W)?)\s*:\s*Higher the Wattage', text)
+            color_data = [] 
+            # Define a regex pattern to match the colors
+            pattern = r'colours:\s*([\w\s\(\),]+)'
+
+            # Search for the pattern in the text
+            match = re.search(pattern, description)
+
+            # Check if the pattern is found
             if match:
-                watt_value = match.group(1)
-                watt = watt_value
-                # print(watt)
-                break
-        if(table_elements):
-            for table in table_elements:
-                specs.update(getTableData(table))
-        product["images"]=(img) 
-        product["brand_image"]=brand_image 
-        product["model_name"]=model_name
-        product["description"]=description
-        product["rating"]=rating
-        product["review"]=review
-        product["original_price"]=original_price
-        product["discount_price"]=discount_price
-        product["discount_percent"]=discount_percent
-        product["storage"]=storage 
-        product["color"]=color 
-        product["ram"]=ram 
-        product["size"]=size 
-        product["washing_capacity"]=washing_capacity 
-        product["wifi_connectivity"]=wifi_connectivity 
-        product["highlights"]=highlights 
-        product["specs"]=specs 
-        product["details"]=details 
-        product["Watt"] = watt
+                # Extract and process the colors
+                colors_str = match.group(1).strip()
+                all_colors = re.findall(r'\w[\w\s]*(?:\([\w\s,]+\))?', colors_str)
 
-        print(f"Inserting the scraped Data: {product['model_name']}")
-        insertProduct(massage(product))
+                # Split colors connected by "and"
+                color_data = [color.strip() for sublist in [color.split(' and ') for color in all_colors] for color in sublist]
+
+            spec_elements=product_soup.find_all('div', class_ = "o-dsiSgT o-eemiLE o-cYdrZi o-fzoTov o-fzoTzh o-cpnuEd")
+            specs={}
+            # details=getGridData(product_soup)
+            if(spec_elements):
+                for spec in spec_elements:
+                    specs.update(getTableData(spec))
+            product["images"]=(img) 
+            product["brand_image"]=brand_image 
+            product["model_name"]=model_name
+            product["description"]=description
+            product["rating"]=rating
+            product["review"]=review
+            product["original_price"]=original_price
+            product["specs"]=specs 
+            product["color"]=color_data
+
+            print(f"Inserting the scraped Data: {product['model_name']}")
+            insertProduct(massage(product))
 
     except Exception as e:
         print(f"Error getDataFromProductLink: {str(e)}")
@@ -172,35 +125,20 @@ def getDataFromProductLink(link,type, value, massage):
         getDataFromProductLink(link, value, massage)
 
 def productDetails(url, massage, callBack):
-    next_link=""
     try: 
-        main_page=requests.post(url)
-        # main_page=requests.get(url) // Not working for the category Juicer,mixer & grinder
+        main_page=requests.get(url, headers=headers)
         main_soup = BeautifulSoup(main_page.content, "html.parser")
         product_links=[]
-        class1=main_soup.find_all("a",class_="_1fQZEK",href=True)
-        class2=main_soup.find_all("a",class_="s1Q9rs",href=True)
-        class3=main_soup.find_all("a",class_="_2UzuFa",href=True)
-        if(class1):
-            product_links.append(class1)
-        elif(class2):
-            product_links.append(class2)
-        elif(class3):
-            product_links.append(class3)  
+        for class1 in main_soup.find_all("a",class_="o-brXWGL o-frwuxB",href=True):
+            h_tag = class1.get('href')
+            if h_tag:
+                product_links.append(h_tag)
+        for class2 in main_soup.find_all("a",class_="o-elzeOy o-bkmzIL CyctJJ",href=True):
+            h_tag = class2.get('href')
+            if h_tag:
+                product_links.append(h_tag)
         
-        callBack(product_links[0])
-        
-        next_page=main_soup.find_all("a",class_="_1LKTO3",href=True)
-        if(next_page): 
-                if(len(next_page)==2):
-                    if(next_page[1].text == "Next"):
-                        next_link=next_page[1]["href"]
-                else: 
-                    if(next_page[0].text == "Next"):
-                        next_link=next_page[0]["href"] 
-                if(next_link):
-                    next_link=base_url+next_link
-                    productDetails(next_link, massage, callBack)
+        callBack(product_links)
 
     except Exception as e:
         print(f"Error productDetails: {str(e)}")
@@ -236,31 +174,27 @@ class BaseThread():
 
 def scrapProductLink(product_links,type, massage, value, callBack):
     for link in product_links:
-        getDataFromProductLink(link['href'],type, value, massage)
+        getDataFromProductLink(link,type, value, massage)
     callBack()
 
 def scrapBrandDetails(brands,type, searchKey, getRow):
     threads = []
     for value in brands:
-        if type=='SMART WATCH':
-            
-             q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false&p%5B%5D=facets.brand%255B%255D%3D"+value
-             url = base_url+"/search?q="+str(q)
-
-        if type == 'JUICER, MIXERS & GRINDERS':
-            q="all+"+value+"+"+ searchKey +"&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off&augment=false"
-            url = base_url+"/search?q="+str(q)
+        if type == 'Car':
+            # q="all+"+value+"+"+ searchKey
+            url = base_url+ value["link"]
 
         else:        
             q="all+"+value+"+"+ searchKey +"&as-show=on&as=off&augment=false"
             url = base_url+"/search?q="+str(q)
             
-        print(f"Scraping thread of : {value} started \n base url: ${url}")
+        name = value["brand_name"]
+        print(f"Scraping thread of : {name} started \n base url: ${url}")
         baseThread = BaseThread(
                 target=productDetails, 
                 type=type,
                 url = url, 
-                value = value,
+                value = name,
                 getRow = getRow
             )
         # threads.append(baseThread.start())
@@ -269,14 +203,22 @@ def scrapBrandDetails(brands,type, searchKey, getRow):
     # for t in threads:                                                           
     #     t.join() 
 
-def scrapProduct():
+def scrapProduct():    
+    main_page=requests.get(base_url, headers=headers)
+    main_soup = BeautifulSoup(main_page.content, "html.parser")
+    Brand_links = []
+    for a_tag in main_soup.find_all('a', class_ = "o-cKuOoN o-frwuxB"):
+        href_value = a_tag.get('href')
+        brand_value = a_tag.get('title')
+        if href_value:
+            Brand_links.append({"link": href_value, "brand_name": brand_value})
+    
     for product in productData:
-        if product['type'] == 'JUICER, MIXERS & GRINDERS':
-            scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
-        # if product['type'] == 'PRINTER':
-        #     scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
-        # elif product["type"] == 'SMART WATCH':
-        #     scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
+        if product['type'] == 'Car':
+            scrapBrandDetails(Brand_links,product['type'], product['searchKey'], product['getRow'])
+    
+
+
     print("All Threads started:")
     client.Close()
     return {"message":"Product Data Synced!"}    
