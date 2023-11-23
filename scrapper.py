@@ -65,11 +65,11 @@ def getDataFromProductLink(link,type, value, massage):
             product_soup = BeautifulSoup(varient_page.content, "html.parser")
             product['url'] = varient_url
             model_name=getText(product_soup.find("h1",class_="o-dOKno o-bNCMFw o-eqqVmt"))
-            filter = {'model': model_name}
+            filter = {"specifications.Variant": model_name}
             isExist = products_collection.find_one(filter)
             if isExist is not None:
                 print(f"Product Already Exists: Model : {model_name}")
-                return 
+                continue
 
             product['brand_name'] = value
             product_images=product_soup.find_all("div",class_="iyZWZe")

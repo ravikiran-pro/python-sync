@@ -48,14 +48,347 @@ def giveMeProductRow(dataType,row):
         newRow['brand'] = row['brand_name']
         newRow['model'] = row.get('model_name', {}).split(" (", 1)[0]
         if newRow['brand'] == "Maruti Suzuki":
-            newRow['warranty_coverage'] = "3 Years/60,000 km"
+            newRow['warranty_coverage'] = "3 Years"
             newRow['warranty_details'] = {
-                'warranty_summary': row.get('specs',{}).get('Warranty Summary',""),
+                'warranty_summary': "3 Years/60,000 km",
                 'covered':row.get('specs',{}).get('Covered in Warranty',""),
                 'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
                 'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
                 'link': "https://drive.google.com/file/d/1nVTllNFLbea0cPTC0kqpUCbZC-UfpKF6/view?usp=drive_link"
             }
+        elif newRow['brand'] == 'Kia':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 Years / Unlimited Kms",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.kia.com/content/dam/kwcms/au/en/files/service/Kia-Warranty-terms-and-conditions.pdf"
+            }
+        elif newRow['brand'] == 'Toyota':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 Years / 100K Kms",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.toyotabharat.com/documents/extended-warranty/tw-tc.pdf"
+            }
+        elif newRow['brand'] == 'Honda':
+            newRow['warranty_coverage'] = "3-Year"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3-Year/36,000-Mile ",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.hondacarindia.com/honda-services/service-products/warranty"
+            }
+        elif newRow['brand'] == 'MG':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 Years/1 Lakh kms",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.mgmotor.co.in/service"
+            }
+        elif newRow['brand'] == 'Skoda':
+            newRow['warranty_coverage'] = "4 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "4 years / 100,000 Kms",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.skoda-auto.co.in/other-offerings/4year-skoda-warranty"
+            }
+        elif newRow['brand'] == 'Jeep':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 Years / 100,000 km",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.jeep-india.com/content/dam/cross-regional/apac/jeep/en_in/app-icon/warranty-manual-compass.pdf"
+            }
+        elif newRow['brand'] == 'Nissan':
+            newRow['warranty_coverage'] = ""
+            newRow['warranty_details'] = {
+                'warranty_summary': "",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': ""
+            }
+        elif newRow['brand'] == 'Renault':
+            newRow['warranty_coverage'] = "2 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': " 2 years or 50,000 km",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.renault.co.in/terms-and-conditions.html"
+            }
+        elif newRow['brand'] == 'Volkswagen':
+            newRow['warranty_coverage'] = "4 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "4 year (100,000 kilometers) ",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.volkswagen.co.in/en/owners/warranty.html"
+            }
+        elif newRow['brand'] == 'Citroen':
+            newRow['warranty_coverage'] = "2 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "2 years/40,000 km",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://business.citroen.co.uk/maintain/citroen-warranty.html#:~:text=Every%20new%20Citro%C3%ABn%20enjoys%20the,your%20current%20warranty%20has%20expired."
+            }
+        elif newRow['brand'] == 'Audi':
+            newRow['warranty_coverage'] = "5 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': " 5 years with unlimited mileage ",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.audi.in/in/web/en/customer-area/audi-owners/vehiclewarranty.html"
+            }
+        elif newRow['brand'] == 'Tata':
+            models = {
+                        "Indica/Indigo/Vista/Manza/Zest/Bolt/Tiago/Tigor/Nexon/Punch/Altroz/Safari 2.2 Dicor": "2 Years /75,000 Kms",
+                        "Harrier": "2 Years /1,00,000 Kms",
+                        "Nano": "4 Years /60,000 Kms",
+                        "Aria/Storme/Sumo Gold/Grande/Movus/Hexa": "3 Years /1,00,000 Kms",
+                        "Sumo Victa / Spacio ": "1.5 Years /Unlimited"
+                    }
+            for model, warranty_info in models.items():
+                if any(substring.lower() in newRow['model'].lower() for substring in model.split('/')):
+                    years_match = re.search(r'(\d+(\.\d+)?) Years', warranty_info)
+                    newRow['warranty_coverage'] = years_match.group(1)
+                    newRow['warranty_details'] = {
+                        'warranty_summary': warranty_info,
+                        'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                        'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                        'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                        'link': "https://cars.tatamotors.com/service/owners/information-on-warrant"
+                    }
+            else:
+                newRow['warranty_coverage'] = ""
+                newRow['warranty_details'] = {
+                    'warranty_summary': "",
+                    'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                    'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                    'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                    'link': ""
+                }           
+        elif newRow['brand'] == 'Hyundai':
+            models = {
+                        "Santro/NIOS/Aura/i20/N Line/Xcent/Grand i10": "3 Years / 100K Kms (Whichever is earlier) ",
+                        "Venue/New Venue/Verna/Creta/Alcazar/Elantra/Tucson/Kona": "3 Years / Unlimited Kms ",
+                    }
+            for model, warranty_info in models.items():
+                if any(substring.lower() in newRow['model'].lower() for substring in model.split('/')):
+                    years_match = re.search(r'(\d+(\.\d+)?) Years', warranty_info)
+                    newRow['warranty_coverage'] = years_match.group(1)
+                    newRow['warranty_details'] = {
+                        'warranty_summary': warranty_info,
+                        'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                        'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                        'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                        'link': "https://www.hyundai.com/in/en/connect-to-service/warranty-policy/overview"
+                    }
+            else:
+                newRow['warranty_coverage'] = ""
+                newRow['warranty_details'] = {
+                    'warranty_summary': "",
+                    'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                    'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                    'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                    'link': ""
+                }
+        elif newRow['brand'] == 'Aston Martin':
+            newRow['warranty_coverage'] = "2 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "2 years or 90,000 km",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.audiusa.com/us/web/en/service/warranty.html#:~:text=Audi%20warranties&text=The%20Audi%20New%20Vehicle%20Limited,Assistance%20at%20no%20additional%20cost.&text=The%20Audi%20Certified%20pre%2Downed,20%2C000%20miles%E2%80%94whichever%20occurs%20first."
+            }
+        elif newRow['brand'] == 'BMW':
+            newRow['warranty_coverage'] = "2 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "2 years with unlimited mileage ",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.bmw.in/en/topics/owners/warranty-policy.html#:~:text=The%20entire%20vehicle%20(except%20for,from%20the%20warranty%20start%20date."
+            }
+        elif newRow['brand'] == 'BYD':
+            newRow['warranty_coverage'] = "6 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "6 years/150,000 kilometer reading",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.byd.com/in/service/warranty-policy"
+            }
+        elif newRow['brand'] == 'Bentley':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 yr/10,000,000 km",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.bentleymotors.com/en/world-of-bentley/ownership/services/warranty.html"
+            }
+        elif newRow['brand'] == 'Jaguar':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 yr/100,000 km",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.jaguar.in/ownership/service-warranties/warranties/index.html#:~:text=For%20hassle%2Dfree%20repairs%20and,ever%20occurs%20earlier)%20manufacturer's%20warranty."
+            }
+        elif newRow['brand'] == 'Lamborghini':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3-years/unlimited mileage ",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.lamborghini.com/en-en/warranty-extension"
+            }
+        elif newRow['brand'] == 'Land Rover':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 yr/100,000 km",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.landrover.in/ownership/parts-warranty.html"
+            }
+        elif newRow['brand'] == 'Mercedes-Benz':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 years with unlimited mileage.",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.mercedes-benz.co.in/passengercars/services/warranty.html"
+            }
+        elif newRow['brand'] == 'Rolls-Royce':
+            newRow['warranty_coverage'] = "4 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "four-year, unlimited mileage",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.rolls-roycemotorcars.com/chennai/en_GB/showroom.html?utm_source=google&utm_medium=cpc&utm_campaign=dealersearch&utm_content=july&gclid=Cj0KCQiA6vaqBhCbARIsACF9M6lRigItq1j9ou9xt35KhpTyPtX_NV33GKU6shYJo2lEChjZFCRFtHwaAgSlEALw_wcB"
+            }
+        elif newRow['brand'] == 'Volvo':
+            newRow['warranty_coverage'] = "2 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "2 years with unlimited mileage.",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.volvocars.com/in/l/volvo-warranty/"
+            }
+        elif newRow['brand'] == 'Isuzu':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3-Year/50,000-Mile Basic Limited Warranty",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.isuzulv.com/warranty-information/"
+            }
+        elif newRow['brand'] == 'Bugatti':
+            newRow['warranty_coverage'] = "4 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "four-year, unlimited mileage",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.bugatti.com/ownership/customer-service/#warranty"
+            }
+        elif newRow['brand'] == 'Porsche':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "The warranty (available for vehicles up to their 15th year* and with a mileage not exceeding 200,000 km/125.000 miles*) covers all components of your Porsche for 12, 24 or 36 months*",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.porsche.com/international/accessoriesandservice/porscheservice/vehicleinformation/approvedwarranty/"
+            }
+        elif newRow['brand'] == 'MINI':
+            newRow['warranty_coverage'] = "2 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "two-year dealer warranty without mileage limitation",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.mini.in/en_IN/home/serv/service-and-repair/warranties.html"
+            }
+        elif newRow['brand'] == 'McLaren':
+            newRow['warranty_coverage'] = "5 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "5 years or 45,000 miles",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.mclarenpalmbeach.com/mclaren-information/mclaren-warranty-coverage/#:~:text=McLaren%20New%20Vehicle%20Limited%20Warranty,%25%20State%20of%20Health%20(SoH)"
+            }
+        elif newRow['brand'] == 'Maserati':
+            newRow['warranty_coverage'] = "4 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': " 4-year / 50,000-mile New Car Limited Warranty.",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.maseratili.com/manufacturer-information/what-does-a-maserati-warranty-cover/"
+            }
+        elif newRow['brand'] == 'Force Motors':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3 years / 3 Lac kms warranty with 7 free services.",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.forcegurkha.co.in/service/#warranty , https://www.forcemotors.com/Trax-DV.php"
+            }
+        elif newRow['brand'] == 'Ferrari':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "3-year/unlimited mileage factory warranty along with a seven-year free maintenance program.",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.ferrarifl.com/service/warranty/"
+            }
+        elif newRow['brand'] == 'Mahindra':
+            newRow['warranty_coverage'] = ""
+            newRow['warranty_details'] = {
+                'warranty_summary': "",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': ""
+            }
+        elif newRow['brand'] == 'Lexus':
+            newRow['warranty_coverage'] = "3 Years"
+            newRow['warranty_details'] = {
+                'warranty_summary': "three years or 1,00,000 km, whichever comes first. During this period, Lexus will repair or replace any defective Lexus-supplied part.",
+                'covered':row.get('specs',{}).get('Covered in Warranty',""),
+                'notCovered':row.get('specs',{}).get('Not Covered in Warranty',""),
+                'serviceType':row.get('specs',{}).get('Warranty Service Type',""),
+                'link': "https://www.lexusindia.co.in/en/servicing-and-support/warranty-coverage.html#"
+            }
+        
 
     if dataType == 'JUICER, MIXERS & GRINDERS':
         newRow['product_type_id'] = '654e01776a319ec3faebe641'
