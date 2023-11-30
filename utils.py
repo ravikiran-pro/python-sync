@@ -889,7 +889,6 @@ productData = [
         "type": "JUICER, MIXERS & GRINDERS"
     },
     {
-        # "brands": [],
         "searchKey":"Car",
         "getRow": lambda row: giveMeProductRow('Car',row),
         "type": "Car"
