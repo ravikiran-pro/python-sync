@@ -5,6 +5,7 @@ import time
 from bs4 import BeautifulSoup
 from utils import productData
 from insertData import insertProduct
+from webdriver import ChromeHeadless
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from connection import client, products_collection
@@ -66,10 +67,10 @@ def getDataFromProductLink(link,type, value, massage):
             product['url'] = varient_url
             model_name=getText(product_soup.find("h1",class_="o-dOKno o-bNCMFw o-eqqVmt"))
             filter = {"specifications.Variant": model_name}
-            isExist = products_collection.find_one(filter)
-            if isExist is not None:
-                print(f"Product Already Exists: Model : {model_name}")
-                continue
+            # isExist = products_collection.find_one(filter)
+            # if isExist is not None:
+            #     print(f"Product Already Exists: Model : {model_name}")
+            #     continue
 
             product['brand_name'] = value
             product_images=product_soup.find_all("div",class_="iyZWZe")
@@ -86,6 +87,9 @@ def getDataFromProductLink(link,type, value, massage):
             color_data = [] 
             # Define a regex pattern to match the colors
             pattern = r'colours:\s*([\w\s\(\),]+)'
+
+            # varient_page = requests.get(varient_url, headers= headers)
+            # product_soup.find_all('a', {'title': color_data[0]})[0].find('img')
 
             # Search for the pattern in the text
             match = re.search(pattern, description)
@@ -105,18 +109,21 @@ def getDataFromProductLink(link,type, value, massage):
             if(spec_elements):
                 for spec in spec_elements:
                     specs.update(getTableData(spec))
-            product["images"]=(img) 
-            product["brand_image"]=brand_image 
-            product["model_name"]=model_name
-            product["description"]=description
-            product["rating"]=rating
-            product["review"]=review
-            product["original_price"]=original_price
-            product["specs"]=specs 
-            product["color"]=color_data
 
-            print(f"Inserting the scraped Data: {product['model_name']}")
-            insertProduct(massage(product))
+            for color in color_data:
+                product["images"]=(img) 
+                product["brand_image"]=brand_image 
+                product["model_name"]=model_name + ' ' + color
+                product["description"]=description
+                product["rating"]=rating
+                product["review"]=review
+                product["original_price"]=original_price
+                product["specs"]=specs 
+                product["color"]=color
+
+
+                print(f"Inserting the scraped Data: {product['model_name']}")
+                insertProduct(massage(product))
 
     except Exception as e:
         print(f"Error getDataFromProductLink: {str(e)}")

@@ -35,7 +35,7 @@ def giveMeProductRow(dataType,row):
         'suggestion':"",
         'specifications': specifications,
         # 'brand_id': brands[row['brand_name']]['brand_id'],
-        # 'PID': row['pid'],
+        'PID': "",
         'is_active': True,
         'created_at': iso_string,
         'updated_at': iso_string,
@@ -43,7 +43,7 @@ def giveMeProductRow(dataType,row):
     }
 
     if dataType == 'Car':
-        newRow['product_type_id'] = '61645a921082c438b19ad832'
+        newRow['product_type_id'] = '61645a921082c438b19ae838'
         newRow['category_id'] = '61645a921082c438b19ad82f'
         newRow['brand'] = row['brand_name']
         newRow['model'] = row.get('model_name', {}).split(" (", 1)[0]
