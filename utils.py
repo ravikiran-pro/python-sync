@@ -16,6 +16,7 @@ def giveMeProductRow(dataType,row):
     row['description'] = replace_all(row['description'],'\u00a0', '')
     row['model_name'] = replace_all(row['model_name'],'\u00a0', '')
     specifications = giveMeSpecification(dataType, row)
+    brand_name = row.get('brand_name', '')  # Using get to handle the case if 'brand_name' is not present
     newRow = {
         'name': row['model_name'],
         'brand': "",
@@ -34,8 +35,8 @@ def giveMeProductRow(dataType,row):
         'img': row['images'][0] if row['images'] else 'https://prodkt-master.objectstore.e2enetworks.net/ProductPlaceholder.svg',
         'suggestion':"",
         'specifications': specifications,
-        # 'brand_id': brands[row['brand_name']]['brand_id'],
-        'PID': "",
+        'brand_id': brands.get(brand_name, {}).get('brand_id', ""),
+        'PID': row['pid'],
         'is_active': True,
         'created_at': iso_string,
         'updated_at': iso_string,
@@ -629,6 +630,208 @@ def giveMeProductRow(dataType,row):
             'specifications.Color': specifications.get('Color','NA'),
         }
         
+    if dataType == 'Microwave Oven':
+        if specifications.get('Type','') == '' and specifications.get('Capacity','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad843'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Capacity'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Capacity': specifications.get('Capacity','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Dishwasher':
+        if specifications.get('Type','') == '' and specifications.get('Capacity','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"") or row.get('specs', {}).get('Model Number',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"") or row.get('specs', {}).get('Model Number',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad848'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Capacity'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Capacity': specifications.get('Capacity','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Vacuum Cleaner':
+        if specifications.get('Type','') == '' and specifications.get('Color','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '61645a921082c438b19ad849'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Type'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Water Heater':
+        if specifications.get('Type','') == '' and specifications.get('Color','') == '':
+            return False      
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '617a4136928a9c6eb21b163c'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Type'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Oven Toaster Grill (OTG)':
+        if specifications.get('Capacity','') == '' and specifications.get('Color','') == '':
+            return False   
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '6576f22ac2196e6b09155ab9'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Capacity'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Capacity': specifications.get('Capacity','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Air Fryer':
+        if specifications.get('Capacity','') == '' and specifications.get('Color','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '6576f22ac2196e6b09155aba'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Capacity'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Capacity': specifications.get('Capacity','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Iron Steamer':
+        if specifications.get('Type','') == '' and specifications.get('Color','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '6576f22ac2196e6b09155abb'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Type'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Massager':
+        if specifications.get('Type','') == '' and specifications.get('Color','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '6576f22ac2196e6b09155abc'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Type'].replace(' ', '').lower()+' '+specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+    if dataType == 'Invertor':
+        if specifications.get('Type','') == '' and specifications.get('Efficiency','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '6576f22ac2196e6b09155abd'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Type'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Type': specifications.get('Type','NA'),
+            'specifications.Efficiency': specifications.get('Efficiency','NA'),
+        }
+
+    if dataType == 'Hair Dryer':
+        if specifications.get('Color','') == '':
+            return False     
+        newRow['brand']= row.get('model_name', {}).split(" ")[0]
+        newRow['model']= row.get('specs', {}).get('Model Name',"")
+        newRow['model_no']= row.get('specs', {}).get('Model Name',"")
+        newRow['product_type_id'] = '6576f22ac2196e6b09155abe'
+        newRow['category_id'] = '61645a921082c438b19ad831'
+        warranty_coverage = row.get('specs',{}).get('Warranty Summary',"")
+        if (warranty_coverage):
+            newRow['warranty_coverage'] = warranty_coverage.split('Warranty')[0].strip()
+        newRow['suggestion']= newRow['brand'].split('(')[0].strip() + ' ' + specifications['Color'].replace(' ', '').lower()
+        newRow['filter'] = {
+            'model_no': newRow.get('model_no',''),
+            'model': newRow.get('model',''),
+            'brand': newRow['brand'],
+            'specifications.Color': specifications.get('Color','NA'),
+        }
+
+        
     newRow['model_no'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model_no']
     newRow['model'] =  newRow['model_no'][0] if len(newRow['model_no']) == 1 else newRow['model']
     return newRow
@@ -739,158 +942,286 @@ def giveMeSpecification(dataType, row):
         }
     pass
 
+    if dataType == 'Microwave Oven':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Capacity': row.get('specs', {}).get('Capacity', ''),
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+    if dataType == 'Dishwasher':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Capacity': row.get('specs', {}).get('Capacity', ''),   
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+    if dataType == 'Vacuum Cleaner':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Color': row.get('model_name', {}).split("(")[1].split(",")[0]
+        }
+    pass
+
+    if dataType == 'Water Heater':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+    if dataType == 'Oven Toaster Grill (OTG)':
+        return {
+            'Capacity': row.get('specs', {}).get('Capacity', ''),
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+    if dataType == 'Air Fryer':
+        return {
+            'Capacity': row.get('specs', {}).get('Pan Capacity', ''),
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+    if dataType == 'Iron Steamer':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+    if dataType == 'Massager':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+    if dataType == 'Invertor':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Efficiency': row.get('Efficiency', {}).get('Efficiency', ''),
+        }
+    pass
+
+    if dataType == 'Hair Dryer':
+        return {
+            'Type': row.get('specs', {}).get('Type', ''),
+            'Color': row.get('specs', {}).get('Color', '')
+        }
+    pass
+
+
+    
+
     return {}
 
 productData = [
+#   {
+#         "brands":[ 
+#             "Acer", "Apple","Asus","BlackBerry","Celkon","Gionee","Google",
+#             "Haier","Honor","HP","HTC","Huawei","Infinix","Intex","Karbonn",
+#             "Lava","Lenovo","LG","Micromax","Microsoft","Motorola","Nokia","Nothing",
+#             "OnePlus","Oppo","Panasonic","Philips","Realme","Samsung","Sony",
+#             "Spice","TCL","Tecno","vivo","Xiaomi","XOLO","YU","ZTE"
+#         ],
+#         "searchKey":"mobile",
+#         "getRow": lambda row: giveMeProductRow('MOBILE',row),
+#         "type": "MOBILE"
+#     },
+#     {
+#         "brands":[ 
+#             "Daikin","Voltas","Blue Star","LG","Hitachi","Carrier","Samsung","Whirlpool",
+#             "Godrej","Mitsubishi Electric","Panasonic","Lloyd","Haier","O General","Onida",
+#             "IFB","Sharp","TCL","Sanyo","Videocon"
+#         ],
+#         "searchKey":"ac",
+#         "getRow": lambda row: giveMeProductRow('AC',row),
+#         "type": "AC"
+#     },
+#     {
+#         "brands":[
+#             'LG', 'Samsung', 'Whirlpool', 'Haier', 'Godrej', 'Bosch', 'Panasonic', 'Voltas', 
+#             'Hitachi', 'IFB', 'Siemens', 'Kelvinator', 'Videocon', 'Onida', 'Toshiba', 'Electrolux', 
+#             'Sharp', 'Intex', 'Sansui', 'Mitashi', 'Blue Star', 'Croma', 'Lloyd', 'Kenstar'
+#         ],
+#         "searchKey":"refrigerator",
+#         "getRow": lambda row: giveMeProductRow('REFRIGERATOR',row),
+#         "type": "REFRIGERATOR"
+#     },
+#     {
+#         "brands":[
+#             'Samsung', 'Haier', 'Panasonic','Onida',
+#             'Toshiba', 'Intex', 'Lloyd', 'realme', 'Mi',
+#             'OnePlus', 'Sony', 'Vu', 'Thomson', 'Motorola',
+#             'Infinix', 'Tcl', 'Iffalcon', 'Acer', 'Micromax',
+#             'Nokia',  'Philips', 'Bpl', 'Itel',
+#         ],
+#         "searchKey":"tv",
+#         "getRow": lambda row: giveMeProductRow('TV',row),
+#         "type": "TV"
+#     },
+#     {
+#         "brands":[
+#             'Hp', 'Asus', 'Lenovo', 'Dell', 'Msi',
+#             'Apple', 'Avita', 'Acer', 'Samsung', 'Infinix',
+#             'Realme', 'Gigabyte', 'Vaio', 'Primebook', 'Alienware',
+#             'Smartron', 'Microsoft', 'Lg Gram',  
+#         ],
+#         "searchKey":"laptop",
+#         "getRow": lambda row: giveMeProductRow('LAPTOP',row),
+#         "type": "LAPTOP"
+#     },
+#     {
+#         "brands":[
+#             'Honor', 'Mi', 'OnePlus', 'Oppo', 'Apple',
+#             'Spigen', 'Samsung', 'Lenovo', 'Huawei', 'Asus',
+#             'Xiaomi', 'Dell', 'HP', 'Google', 'Tcl',
+#             'Alcatel', 'Iball', 'Honor', 'Motorola',
+#               ],
+#         "searchKey":"tablet",
+#         "getRow": lambda row: giveMeProductRow('TABLET',row),
+#         "type": "TABLET"
+#     },
+#     {
+#         "brands":[
+#              'Samsung', 'LG', 'Whirlpool', 'IFB', 'Panasonic', 
+#              'Motorola', 'Thomson', 'Godrej', 'Bosch', 'Voltas beko', 
+#              'Haier', 'Lloyd', 'Onida', 
+#               ],
+#         "searchKey":"washing machine",
+#         "getRow": lambda row: giveMeProductRow('WASHING MACHINE',row),
+#         "type": "WASHING MACHINE"
+#     },
+#     {
+#         "brands":[
+#              'HP','Canon','Epson','PANTUM','Brother','TVS ELECTRONICS','CPS',
+#             'Lenmark','KonicaMinolta','Samsung'
+#         ],
+#         "searchKey":"printers only",
+#         "getRow": lambda row: giveMeProductRow('PRINTER',row),
+#         "type": "PRINTER"
+#     },
+#     {
+#         "brands":[
+#              'Elica', 'Faber', 'Hindware', 'Glen', 'Sunflame',
+#              'Prestige', 'Kaff', 'Bosch', 'Inalsa', 'Kutchina', 
+#              'V-Guard',        
+#                ],
+#         "searchKey":"Chimney",
+#         "getRow": lambda row: giveMeProductRow('CHIMNEY',row),
+#         "type": "CHIMNEY"
+#     },
+#     {
+#         "brands": [
+#             "boAt", "Noise", "Amazfit", "Samsung", "CrossBeats", "Spigen", "Garmin", "beatXP",
+#             "Pebble", "TAGG", "HAMMER", "Fastrack", "ZEBRONICS", "GIZMORE", "Fitbit", "Apple",
+#             "Vibez", "Helix", "Maxima", "sekyo", "AJO", "Fitshot", "Casio", "Fire-Boltt", "Titan",
+#             "Fossil", "TIMEX","Sonata",  "Diesel",
+#             # "SKMEI",   "Chumbak", "Citizen","ADAMO", "Tommy Hilfiger", "LORENZ", "REDUX",
+#         ],
+#         "searchKey":"smart watch",
+#         "getRow": lambda row: giveMeProductRow('SMART WATCH',row),
+#         "type": "SMART WATCH"
+#     },
+#     {
+#         "brands":[
+#              'Aquaguard', 'Pureit', 'Hindware', 'Blue Star', 'LG',
+#              'AquaDpure', 'AQUA', 'Aqua Fresh', 'Fedula', 'KENT',
+#              'Aqua Dove', 'Remino', 'NPT Purification System', 'Keel', 'Grand plus',
+#              'Royal Aquafresh', 'Aquafresh', 'Kaveri AquaFresh', 'E.F.M', 'AquaDart',
+#              'G.S. Aquafresh', 'Hydroshell', 'Blair', 'Aqua Ace', 'Earth', 
+#              'LIVPURE', 'Aquaultra', 'Havells', 'Aquamart', 'Always', 
+#              'GE Filtration', 'AquaActive', 'Aquanza', 'Aqua Nerio', 'Purosis', 
+#              'Earth Ro System', 'ONE RO', 'Muskpure', 'Star Aqua', 'Blueshell', 
+#              'V-Guard', 'Trypkon', 'AO Smith', 'One7', 'MarQ by Flipkart', 
+#              'AQUA KING', 'TSP AQUA', 'OneTech', 'Aqua Active', 'Tata Swach', 
+#              'PureOne', 'Nexus Pure', 'Mclord', 'Safex', 'Noir Aqua', 
+#              'Eureka Forbes Ltd', 'Apeiron', 'Oseas Aqua', 'Aquadfresh', 'Rama', 
+#              'R.K. Aqua Fresh India', 'NILE', 'Kinsco', 'KONVIO', 'JX PERT', 
+#              'FLOJET', 'Eureka Forbes Aquasure from Aquaguard', 'Water Solution', 'SAMTA', 'RUIQUAN', 
+#              'Perfect Zone', 'Peore', 'Maxpure', 'Home-pro', 'Hi Tech', 
+#              'Ojhashree', 'Skyguard', 'FABER', 'Alkalinelife', 'CUCKOO', 
+#              'Aquatec Plus', 'Aqua Supreme', 'Antbell', 'Proven', 'Unicorn', 
+#              'Quantech', 'PureMyst', 'Prodrop', 'Prestige', 'PUREJAL', 
+#              'EUREKA FORBES', 'DPW', 'Aqua Libra', 'Aquaforte', 'Prisaa', 
+#              'HIMAJAL', 'Feelpure', 'FESCHON',       
+#                ],      
+#         "searchKey":"Water purifier",
+#         "getRow": lambda row: giveMeProductRow('WATER PURIFIER',row),
+#         "type": "WATER PURIFIER"
+#     },
     {
-        "brands":[ 
-            "Acer", "Apple","Asus","BlackBerry","Celkon","Gionee","Google",
-            "Haier","Honor","HP","HTC","Huawei","Infinix","Intex","Karbonn",
-            "Lava","Lenovo","LG","Micromax","Microsoft","Motorola","Nokia","Nothing",
-            "OnePlus","Oppo","Panasonic","Philips","Realme","Samsung","Sony",
-            "Spice","TCL","Tecno","vivo","Xiaomi","XOLO","YU","ZTE"
-        ],
-        "searchKey":"mobile",
-        "getRow": lambda row: giveMeProductRow('MOBILE',row),
-        "type": "MOBILE"
+        "brands": [],
+        "searchKey": "Microwave Oven",
+        "getRow": lambda row: giveMeProductRow('Microwave Oven', row),
+        "type": "Microwave Oven",
+        "link": "https://www.flipkart.com/search?q=microwave+oven&sid=j9e%2Cm38%2Co49&as=on&as-show=on&otracker=AS_QueryStore_OrganicAutoSuggest_1_10_na_na_na&otracker1=AS_QueryStore_OrganicAutoSuggest_1_10_na_na_na&as-pos=1&as-type=RECENT&suggestionId=microwave+oven%7CMicrowave+Ovens&requestId=7786a822-b9b3-433c-8d4c-008ae2772f8d&as-backfill=on&otracker=nmenu_sub_TVs%20%26%20Appliances_0_Microwave%20Ovens"
     },
     {
-        "brands":[ 
-            "Daikin","Voltas","Blue Star","LG","Hitachi","Carrier","Samsung","Whirlpool",
-            "Godrej","Mitsubishi Electric","Panasonic","Lloyd","Haier","O General","Onida",
-            "IFB","Sharp","TCL","Sanyo","Videocon"
-        ],
-        "searchKey":"ac",
-        "getRow": lambda row: giveMeProductRow('AC',row),
-        "type": "AC"
+        "brands": [],
+        "searchKey": "Dishwasher",
+        "getRow": lambda row: giveMeProductRow('Dishwasher', row),
+        "type": "Dishwasher",
+        "link": "https://www.flipkart.com/dish-washers/pr?sid=j9e%2Cm38%2C58n&ctx=eyJjYXJkQ29udGV4dCI6eyJhdHRyaWJ1dGVzIjp7InRpdGxlIjp7Im11bHRpVmFsdWVkQXR0cmlidXRlIjp7ImtleSI6InRpdGxlIiwiaW5mZXJlbmNlVHlwZSI6IlRJVExFIiwidmFsdWVzIjpbIkV4cGxvcmUgdGhlIFNlbGVjdGlvbiJdLCJ2YWx1ZVR5cGUiOiJNVUxUSV9WQUxVRUQifX19fX0%3D&wid=9.productCard.PMU_V2_8"
     },
     {
-        "brands":[
-            'LG', 'Samsung', 'Whirlpool', 'Haier', 'Godrej', 'Bosch', 'Panasonic', 'Voltas', 
-            'Hitachi', 'IFB', 'Siemens', 'Kelvinator', 'Videocon', 'Onida', 'Toshiba', 'Electrolux', 
-            'Sharp', 'Intex', 'Sansui', 'Mitashi', 'Blue Star', 'Croma', 'Lloyd', 'Kenstar'
-        ],
-        "searchKey":"refrigerator",
-        "getRow": lambda row: giveMeProductRow('REFRIGERATOR',row),
-        "type": "REFRIGERATOR"
+        "brands": [],
+        "searchKey": "Vacuum Cleaners",
+        "getRow": lambda row: giveMeProductRow('Vacuum Cleaner', row),
+        "type": "Vacuum Cleaner",
+        "link": "https://www.flipkart.com/vacuum-cleaners/pr?sid=j9e,abm,ul2&marketplace=FLIPKART"
     },
     {
-        "brands":[
-            'Samsung', 'Haier', 'Panasonic','Onida',
-            'Toshiba', 'Intex', 'Lloyd', 'realme', 'Mi',
-            'OnePlus', 'Sony', 'Vu', 'Thomson', 'Motorola',
-            'Infinix', 'Tcl', 'Iffalcon', 'Acer', 'Micromax',
-            'Nokia',  'Philips', 'Bpl', 'Itel',
-        ],
-        "searchKey":"tv",
-        "getRow": lambda row: giveMeProductRow('TV',row),
-        "type": "TV"
+        "brands": [],
+        "searchKey": "Water geysers",
+        "getRow": lambda row: giveMeProductRow('Water Heater', row),
+        "type": "Water Heater",
+        "link": "https://www.flipkart.com/water-geysers/pr?sid=j9e,abm,bfm&marketplace=FLIPKART"
     },
     {
-        "brands":[
-            'Hp', 'Asus', 'Lenovo', 'Dell', 'Msi',
-            'Apple', 'Avita', 'Acer', 'Samsung', 'Infinix',
-            'Realme', 'Gigabyte', 'Vaio', 'Primebook', 'Alienware',
-            'Smartron', 'Microsoft', 'Lg Gram',  
-        ],
-        "searchKey":"laptop",
-        "getRow": lambda row: giveMeProductRow('LAPTOP',row),
-        "type": "LAPTOP"
+        "brands": [],
+        "searchKey": "Oven Toaster Grill (OTG)",
+        "getRow": lambda row: giveMeProductRow('Oven Toaster Grill (OTG)', row),
+        "type": "Oven Toaster Grill (OTG)",
+        "link": "https://www.flipkart.com/oven-toaster-grills/pr?sid=j9e%2Cm38%2Cvr5&otracker=product_breadCrumbs_Oven%20Toaster%20Grills&otracker=nmenu_sub_Appliances_0_Oven%20Toaster%20Grills&otracker=nmenu_sub_TVs%20%26%20Appliances_0_Oven%20Toaster%20Grills%20(OTG)"
     },
     {
-        "brands":[
-            'Honor', 'Mi', 'OnePlus', 'Oppo', 'Apple',
-            'Spigen', 'Samsung', 'Lenovo', 'Huawei', 'Asus',
-            'Xiaomi', 'Dell', 'HP', 'Google', 'Tcl',
-            'Alcatel', 'Iball', 'Honor', 'Motorola',
-              ],
-        "searchKey":"tablet",
-        "getRow": lambda row: giveMeProductRow('TABLET',row),
-        "type": "TABLET"
+        "brands": [],
+        "searchKey": "Air Fryer",
+        "getRow": lambda row: giveMeProductRow('Air Fryer', row),
+        "type": "Air Fryer",
+        "link": "https://www.flipkart.com/air-fryers/pr?sid=j9e,m38,j1e&marketplace=FLIPKART"
     },
     {
-        "brands":[
-             'Samsung', 'LG', 'Whirlpool', 'IFB', 'Panasonic', 
-             'Motorola', 'Thomson', 'Godrej', 'Bosch', 'Voltas beko', 
-             'Haier', 'Lloyd', 'Onida', 
-              ],
-        "searchKey":"washing machine",
-        "getRow": lambda row: giveMeProductRow('WASHING MACHINE',row),
-        "type": "WASHING MACHINE"
+        "brands": [],
+        "searchKey": "Iron Steamer",
+        "getRow": lambda row: giveMeProductRow('Iron Steamer', row),
+        "type": "Iron Steamer",
+        "link": "https://www.flipkart.com/iron/pr?sid=j9e,abm,a0u&marketplace=FLIPKART"
     },
     {
-        "brands":[
-             'HP','Canon','Epson','PANTUM','Brother','TVS ELECTRONICS','CPS',
-            'Lenmark','KonicaMinolta','Samsung'
-        ],
-        "searchKey":"printers only",
-        "getRow": lambda row: giveMeProductRow('PRINTER',row),
-        "type": "PRINTER"
+        "brands": [],
+        "searchKey": "Massager",
+        "getRow": lambda row: giveMeProductRow('Massager', row),
+        "type": "Massager",
+        "link": "https://www.flipkart.com/health-personal-care-appliances/health-care/health-care-devices/massagers/pr?sid=zlw,nyl,bvv,d9z&marketplace=FLIPKART"
     },
     {
-        "brands":[
-             'Elica', 'Faber', 'Hindware', 'Glen', 'Sunflame',
-             'Prestige', 'Kaff', 'Bosch', 'Inalsa', 'Kutchina', 
-             'V-Guard',        
-               ],
-        "searchKey":"Chimney",
-        "getRow": lambda row: giveMeProductRow('CHIMNEY',row),
-        "type": "CHIMNEY"
+        "brands": [],
+        "searchKey": "Invertor",
+        "getRow": lambda row: giveMeProductRow('Invertor', row),
+        "type": "Invertor",
+        "link": "https://www.flipkart.com/inverters/pr?sid=j9e,abm,ve9,7no&marketplace=FLIPKART"
     },
     {
-        "brands": [
-            "boAt", "Noise", "Amazfit", "Samsung", "CrossBeats", "Spigen", "Garmin", "beatXP",
-            "Pebble", "TAGG", "HAMMER", "Fastrack", "ZEBRONICS", "GIZMORE", "Fitbit", "Apple",
-            "Vibez", "Helix", "Maxima", "sekyo", "AJO", "Fitshot", "Casio", "Fire-Boltt", "Titan",
-            "Fossil", "TIMEX","Sonata",  "Diesel",
-            # "SKMEI",   "Chumbak", "Citizen","ADAMO", "Tommy Hilfiger", "LORENZ", "REDUX",
-        ],
-        "searchKey":"smart watch",
-        "getRow": lambda row: giveMeProductRow('SMART WATCH',row),
-        "type": "SMART WATCH"
-    },
-    {
-        "brands":[
-             'Aquaguard', 'Pureit', 'Hindware', 'Blue Star', 'LG',
-             'AquaDpure', 'AQUA', 'Aqua Fresh', 'Fedula', 'KENT',
-             'Aqua Dove', 'Remino', 'NPT Purification System', 'Keel', 'Grand plus',
-             'Royal Aquafresh', 'Aquafresh', 'Kaveri AquaFresh', 'E.F.M', 'AquaDart',
-             'G.S. Aquafresh', 'Hydroshell', 'Blair', 'Aqua Ace', 'Earth', 
-             'LIVPURE', 'Aquaultra', 'Havells', 'Aquamart', 'Always', 
-             'GE Filtration', 'AquaActive', 'Aquanza', 'Aqua Nerio', 'Purosis', 
-             'Earth Ro System', 'ONE RO', 'Muskpure', 'Star Aqua', 'Blueshell', 
-             'V-Guard', 'Trypkon', 'AO Smith', 'One7', 'MarQ by Flipkart', 
-             'AQUA KING', 'TSP AQUA', 'OneTech', 'Aqua Active', 'Tata Swach', 
-             'PureOne', 'Nexus Pure', 'Mclord', 'Safex', 'Noir Aqua', 
-             'Eureka Forbes Ltd', 'Apeiron', 'Oseas Aqua', 'Aquadfresh', 'Rama', 
-             'R.K. Aqua Fresh India', 'NILE', 'Kinsco', 'KONVIO', 'JX PERT', 
-             'FLOJET', 'Eureka Forbes Aquasure from Aquaguard', 'Water Solution', 'SAMTA', 'RUIQUAN', 
-             'Perfect Zone', 'Peore', 'Maxpure', 'Home-pro', 'Hi Tech', 
-             'Ojhashree', 'Skyguard', 'FABER', 'Alkalinelife', 'CUCKOO', 
-             'Aquatec Plus', 'Aqua Supreme', 'Antbell', 'Proven', 'Unicorn', 
-             'Quantech', 'PureMyst', 'Prodrop', 'Prestige', 'PUREJAL', 
-             'EUREKA FORBES', 'DPW', 'Aqua Libra', 'Aquaforte', 'Prisaa', 
-             'HIMAJAL', 'Feelpure', 'FESCHON',       
-               ],      
-        "searchKey":"Water purifier",
-        "getRow": lambda row: giveMeProductRow('WATER PURIFIER',row),
-        "type": "WATER PURIFIER"
-    },
-    {
-        "brands": [
-            "Lifelong", "Prestige","PHILIPS", "Bajaj", "Wonderchef", "Bosch", "Butterfly", "Havells", "Preethi", "USHA", "Pigeon", "Morphy Richards", 
-            "Sujata", "Vidiem", "Faber", "amazon basics", "Crompton", "BOROSIL", "Orient Electric", "Amirthaa", "Thomson", "Premier", "SOWBAGHYA", "Panasonic",
-            "COOKWELL", "Maharaja Whiteline", "Inalsa", "PRINGLE", "BOSS",  "BAJAJ VACCO", "Swiss Military", "Lesco",
-            "STARGAZE", "InstaCuppa", "Greenchef", "Veronica", "RIEO", "Kutchina", "FLORITA", "Ketvin", "SmartFingers",
-            "MAYUMI", "Hamilton Beach", "KENT", "AGARO", "Rico", "SOLARA", "Ponmani"
-        ],
-        "searchKey":"Juicer, Mixers & grinders",
-        "getRow": lambda row: giveMeProductRow('JUICER, MIXERS & GRINDERS',row),
-        "type": "JUICER, MIXERS & GRINDERS"
-    },
-    {
-        "searchKey":"Car",
-        "getRow": lambda row: giveMeProductRow('Car',row),
-        "type": "Car"
-    }
+        "brands": [],
+        "searchKey": "Hair Dryer",
+        "getRow": lambda row: giveMeProductRow('Hair Dryer', row),
+        "type": "Hair Dryer",
+        "link": "https://www.flipkart.com/health-personal-care-appliances/personal-care-appliances/hair-dryers/pr?sid=zlw,79s,mh8&marketplace=FLIPKART"
+    }        
 ]

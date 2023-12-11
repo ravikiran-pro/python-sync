@@ -15,13 +15,13 @@ def Chrome(url):
     driver.get(url)
 
 def ChromeHeadless(url, actions = None):
-    # options = webdriver.ChromeOptions()
+    options = webdriver.ChromeOptions()
     chromedriver_autoinstaller.install()
-    driver = webdriver.Chrome()
-    # options.add_argument('--disable-gpu')
-    # options.add_argument("--headless=new")  
+    # driver = webdriver.Chrome()
+    options.add_argument('--disable-gpu')
+    options.add_argument("--headless=new")  
     # service = Service(executable_path= '/user/bin/chromedrive')
-    # driver = webdriver.Chrome(service = service , options= options)
+    driver = webdriver.Chrome(options= options)
     driver.get(url)
     return driver
 

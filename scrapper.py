@@ -8,6 +8,8 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from connection import client, products_collection
 from multiprocessing import Process
+from webdriver import ChromeHeadless
+from selenium.webdriver.common.by import By
 
 data=[]
 base_url="https://www.flipkart.com"
@@ -55,8 +57,8 @@ def getDataFromProductLink(link,type, value, massage):
             return 
 
         product['brand_name'] = value
-        product_page=requests.get(base_url+link)
-        product_soup=BeautifulSoup(product_page.content,"html.parser")
+        product_page=requests.post(base_url+link)
+        product_soup=BeautifulSoup(product_page. content,"html.parser")
 
         if type=='PRINTER':
             a_element = product_soup.find('div', class_='_3GIHBu').find('a', class_='_2whKao')
@@ -155,7 +157,7 @@ def getDataFromProductLink(link,type, value, massage):
 def productDetails(url, massage, callBack):
     next_link=""
     try: 
-        main_page=requests.get(url)
+        main_page=requests.post(url)
         main_soup = BeautifulSoup(main_page.content, "html.parser")  
         product_links=[]
         class1=main_soup.find_all("a",class_="_1fQZEK",href=True)
@@ -167,20 +169,20 @@ def productDetails(url, massage, callBack):
             product_links.append(class2)
         elif(class3):
             product_links.append(class3)  
-        
+        # callBack(product_links[0][0:1])
         callBack(product_links[0])
-        
-        next_page=main_soup.find_all("a",class_="_1LKTO3",href=True)
-        if(next_page): 
-                if(len(next_page)==2):
-                    if(next_page[1].text == "Next"):
-                        next_link=next_page[1]["href"]
-                else: 
-                    if(next_page[0].text == "Next"):
-                        next_link=next_page[0]["href"] 
-                if(next_link):
-                    next_link=base_url+next_link
-                    productDetails(next_link, massage, callBack)
+            
+        # next_page=main_soup.find_all("a",class_="_1LKTO3",href=   True)
+        # if(next_page): 
+        #         if(len(next_page)==2):
+        #             if(next_page[1].text == "Next"):
+        #                 next_link=next_page[1]["href"]
+        #         else: 
+        #             if(next_page[0].text == "Next"):
+        #                 next_link=next_page[0]["href"] 
+        #         if(next_link):
+        #             next_link=base_url+next_link
+        #             productDetails(next_link, massage, callBack)
 
     except Exception as e:
         print(f"Error productDetails: {str(e)}")
@@ -217,7 +219,7 @@ class BaseThread():
 def scrapProductLink(product_links,type, massage, value, callBack):
     for link in product_links:
         getDataFromProductLink(link['href'],type, value, massage)
-    callBack()
+    # callBack()
 
 def scrapBrandDetails(brands,type, searchKey, getRow):
     threads = []
@@ -239,18 +241,54 @@ def scrapBrandDetails(brands,type, searchKey, getRow):
                 value = value,
                 getRow = getRow
             )
-        # threads.append(baseThread.start())
-        baseThread.start()
-    #     threads[-1].start()
-    # for t in threads:                                                           
-    #     t.join() 
+        # baseThread.start()
+        threads.append(baseThread.start())
+        threads[-1].start()
+    for t in threads:                                                           
+        t.join() 
+
+def getBrands(product_page):
+    brand_div = product_page.find_element(By.XPATH, '//div[text()="Brand"]')
+    parent_element = brand_div.find_element(By.XPATH, '..').find_element(By.XPATH, '..')
+    product_soup=BeautifulSoup(parent_element.get_attribute("outerHTML"),"html.parser")
+    brands = product_soup.find_all('div', class_="_1Y4Vhm _4FO7b6")
+    return brands
 
 def scrapProduct():
     for product in productData:
-        if product['type'] == 'PRINTER':
-            scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
-        elif product["type"] == 'SMART WATCH':
-            scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
+        # if product['type'] == 'PRINTER':
+        #     scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
+        # elif product["type"] == 'SMART WATCH':
+        #     scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
+        product_page=ChromeHeadless(product['link'])
+        
+        brands = getBrands(product_page)
+        if len(brands) == 0:    
+            brand_div = product_page.find_element(By.XPATH, '//div[text()="Brand"]')
+            parent_element = brand_div.find_element(By.XPATH, '..')
+            svg_element = parent_element.find_element(By.TAG_NAME, 'svg')
+            svg_element.click()
+            brands = getBrands(product_page)
+        for brand in brands:
+            brand_name = brand.find('div', class_="_3879cV").text
+            product['brands'].append(brand_name)
+        
+        try:
+            if product_page.find_element(By.CLASS_NAME, 'QvtND5'):
+                more_div = product_page.find_element(By.CLASS_NAME, 'QvtND5')
+                product['brands'] = []
+                more_div.click()
+                product_soup=BeautifulSoup(product_page.page_source,"html.parser")
+                brands_list = product_soup.find_all('div',class_="_4921Z")
+                for brand in brands_list:
+                    product['brands'].append(brand['title'])
+        except:
+            print('no more link found')
+            
+        # brand_name = brands [0].find('div', class_="_3879cV").text
+        # product['brands'].append(brand_name)
+        product_page .close()
+        scrapBrandDetails(product['brands'],product['type'] , product['searchKey'], product['getRow'])
     print("All Threads started:")
     client.Close()
     return {"message":"Product Data Synced!"}    
