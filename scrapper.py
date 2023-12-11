@@ -241,11 +241,11 @@ def scrapBrandDetails(brands,type, searchKey, getRow):
                 value = value,
                 getRow = getRow
             )
-        # baseThread.start()
-        threads.append(baseThread.start())
-        threads[-1].start()
-    for t in threads:                                                           
-        t.join() 
+        baseThread.start()
+    #     threads.append(baseThread.start())
+    #     threads[-1].start()
+    # for t in threads:                                                           
+        # t.join() 
 
 def getBrands(product_page):
     brand_div = product_page.find_element(By.XPATH, '//div[text()="Brand"]')
