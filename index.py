@@ -6,6 +6,7 @@ from get_brands import getBrandsDetails
 from get_specs_data import updateSpecsData
 from bike_scrapper import scrapBikes
 from car_scrapping import scrapCar
+from bianchi_scrapping import scrapBianchi
 import json
 
 app = Flask(__name__)
@@ -43,6 +44,13 @@ def get_brands_details():
 @app.route("/update_specs")
 def update_specs():
     updateSpecsData()
+    return {
+        "message": "Server is running...."
+    }
+
+@app.route("/scrapBianchi")
+def scrap_bianchi():
+    scrapBianchi()
     return {
         "message": "Server is running...."
     }
