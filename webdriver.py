@@ -84,11 +84,11 @@ def click_by_id(driver, name):
 
 def GetChromeDriver(url):
     options = webdriver.ChromeOptions()
-    # options.add_argument('--disable-gpu')
-    # options.add_argument("--headless=new")  
-    service = Service(executable_path= '/user/bin/chromedrive')
-    driver = webdriver.Chrome(service = service , options= options)
+    chromedriver_autoinstaller.install()
+    # driver = webdriver.Chrome()
+    options.add_argument('--disable-gpu')
+    options.add_argument("--headless=new")  
+    # service = Service(executable_path= '/user/bin/chromedrive')
+    driver = webdriver.Chrome(options= options)
     driver.get(url)
-    
-
     return driver
