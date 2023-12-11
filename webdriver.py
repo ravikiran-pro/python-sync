@@ -9,9 +9,14 @@ from selenium.common.exceptions import NoSuchElementException
 
 chromedriver_autoinstaller.install()
 
-def Chrome(url):
-    service = Service(executable_path= '/user/bin/chromedrive')
-    driver = webdriver.Chrome(service = service)
+def Chrome(url, actions = None):
+    options = webdriver.ChromeOptions()
+    chromedriver_autoinstaller.install()
+    # driver = webdriver.Chrome()
+    options.add_argument('--disable-gpu')
+    options.add_argument("--headless=new")  
+    # service = Service(executable_path= '/user/bin/chromedrive')
+    driver = webdriver.Chrome(options= options)
     driver.get(url)
 
 def ChromeHeadless(url, actions = None):
