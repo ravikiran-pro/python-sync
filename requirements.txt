@@ -5,3 +5,4 @@ python-dotenv==1.0.0
 requests==2.25.1
 selenium==4.15.2
 urllib3==1.26.18
+chromedriver-autoinstaller==0.6.2
